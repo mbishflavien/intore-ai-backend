@@ -1,0 +1,67 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Jeanne d'Arc Uwera
+Email: jeanne.uwera@icloud.com
+Phone: +250 737 890 123
+Location: Kigali, Rwanda
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Product-minded full-stack developer with 5 years of experience building 
+customer-facing applications. Strong in TypeScript, React, and Node.js.
+Focused on delivering business value through clean, efficient code.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, HTML, CSS, SQL
+- Frontend: Next.js, React, Redux, Chakra UI, Tailwind
+- Backend: Node.js, Express, Next.js API Routes
+- Database: MongoDB, PostgreSQL, Firebase
+- Tools: Git, Figma, Linear, Notion, Vercel
+- Testing: Jest, Cypress
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Full Stack Developer
+ProductLab Rwanda | Apr 2021 - Present
+- Building SaaS product used by 500+ companies
+- Next.js frontend with TypeScript
+- Node.js microservices with MongoDB
+- Implemented feature flag system
+- Reduced page load by 60%
+
+Frontend Developer
+Agency Pro | Sep 2019 - Mar 2021
+- Developed websites for enterprise clients
+- React with Redux for state management
+- API integrations with Node.js backend
+- Mobile-first responsive development
+
+Junior Developer
+WebStart Ltd | Mar 2019 - Aug 2019
+- WordPress development
+- Basic JavaScript/jQuery work
+
+========================================
+EDUCATION
+========================================
+BSc Information Systems
+Kigali Business University | 2015 - 2019
+
+Advanced TypeScript Certification
+Udemy | 2022
+
+React Performance Optimization
+Frontend Masters | 2023
+
+========================================
+WORKSHOP FACILITATOR
+========================================
+- Organized 10+ React workshops
+- Taught 200+ developers in-person
+- Created video tutorials (50K+ views)

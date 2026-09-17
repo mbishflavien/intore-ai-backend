@@ -1,0 +1,64 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Anitha Uwera
+Email: anitha.uwera@gmail.com
+Phone: +250 722 987 654
+Location: Kigali, Rwanda
+Portfolio: anithauwera.dev
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Results-driven software engineer with 5 years of experience in full-stack development.
+Expert in TypeScript and modern JavaScript frameworks. Built multiple production 
+applications using Next.js and Node.js with MongoDB databases. Passionate about 
+clean code and scalable architecture.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, Go
+- Frontend: Next.js 14, React, Redux Toolkit, Styled Components
+- Backend: Node.js, Express, Fastify, tRPC
+- Database: MongoDB, MySQL, Firebase
+- Tools: Git, Docker, Kubernetes (basic), Vercel, Netlify
+- Practices: TDD, CI/CD, Code Review, Agile/Scrum
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Software Engineer
+InnovateTech Rwanda | Aug 2021 - Present
+- Developed and maintained 3 production Next.js applications
+- Built Node.js microservices handling 5M+ API requests monthly
+- Implemented MongoDB Atlas clusters for high availability
+- Reduced page load time by 40% through optimization
+
+Full Stack Developer
+Rwanda Tech Hub | Feb 2019 - Jul 2021
+- Created e-learning platform with 2,000+ active users
+- Built real-time chat features with Socket.io
+- Designed MongoDB schemas for complex user data
+- Integrated payment gateways (Stripe, PayPal)
+
+Frontend Developer
+Digital Crafts Agency | Jun 2018 - Jan 2019
+- Developed responsive websites for 15+ clients
+- Converted designs to React components
+- Worked with REST APIs
+
+========================================
+EDUCATION
+========================================
+Bachelor of Engineering in Computer Engineering
+Rwanda Institute for Conscious Awareness | 2014 - 2018
+Graduated with Honors
+
+========================================
+ACHIEVEMENTS
+========================================
+- Led team that won National Hackathon 2022
+- Speaker at React Africa Conference 2023
+- Mentor at SheLovesCode Rwanda program

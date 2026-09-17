@@ -1,0 +1,65 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Samuel Habimana
+Email: sam.habimana@gmail.com
+Phone: +250 736 789 012
+Location: Kigali, Rwanda
+Portfolio: samhabimana.dev
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Innovative developer with 6 years of experience in full-stack development.
+Expert in TypeScript ecosystem, modern frameworks, and cloud deployment.
+Built and scaled applications serving thousands of concurrent users.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, Python, Rust
+- Frontend: Next.js, React, Redux, Tailwind CSS
+- Backend: Node.js, Express, Fastify, GraphQL
+- Database: MongoDB, PostgreSQL, Redis, DynamoDB
+- Cloud: AWS, Vercel, Cloudflare, Netlify
+- AI: Prompt Engineering, Gemini, OpenAI Integration
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Senior Developer
+ScaleUp Africa | Mar 2021 - Present
+- Technical lead for marketplace platform
+- TypeScript monorepo with Next.js and Node.js
+- MongoDB for product and order data
+- Real-time notifications with WebSockets
+- Scaled to 50K daily active users
+
+Developer
+E-Commerce Solutions | Jan 2019 - Feb 2021
+- Built shopping platform with payment integration
+- React frontend with Redux state management
+- Node.js API with Express
+- MongoDB for product catalog
+
+Junior Developer
+TechStart Rwanda | Jul 2018 - Dec 2018
+- Web development and maintenance
+- Learning full-stack patterns
+
+========================================
+EDUCATION
+========================================
+BSc Computer Science
+University of Rwanda | 2014 - 2018
+
+Google Cloud Professional Certificate
+Amazon DynamoDB Specialist
+
+========================================
+INNOVATION
+========================================
+- Filed patent for AI-powered recommendation system
+- Won 3 hackathons in past 2 years
+- Speaker at tech conferences

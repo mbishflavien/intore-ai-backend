@@ -1,0 +1,63 @@
+MICHAEL OKECH
+Nairobi, Kenya
+Email: michael.okech@email.com
+Phone: +254 722 456 789
+
+DATA SCIENTIST
+
+Data Scientist with 3 years of experience in machine learning, deep learning, and predictive analytics. Strong foundation in statistical modeling and data visualization.
+
+SKILLS
+- Python (Advanced, 3 years)
+- Machine Learning (Advanced, 3 years)
+- Deep Learning (Intermediate, 2 years)
+- TensorFlow (Advanced, 2 years)
+- SQL (Intermediate, 2 years)
+- Tableau (Intermediate, 1 year)
+
+LANGUAGES
+- English: Fluent
+- Swahili: Native
+- French: Basic
+
+WORK EXPERIENCE
+
+AI KENYA, Nairobi
+Data Scientist
+2021-06 to Present
+- Build machine learning models for clients
+- Data preprocessing and feature engineering
+- Deploy models to production
+
+DATA TECH AFRICA, Nairobi
+Junior Data Scientist
+2019-06 to 2021-05
+- Assist in model development
+- Data analysis and visualization
+
+EDUCATION
+STANFORD ONLINE, Nairobi
+Master's in Data Science
+2019-2021
+UNIVERSITY OF NAIROBI, Kenya
+Bachelor's in Computer Science
+2015-2019
+
+CERTIFICATIONS
+TensorFlow Developer Certificate, 2021
+IBM Data Science Professional, 2020
+
+PROJECTS
+CREDIT SCORING MODEL
+Python, Scikit-learn
+Data Scientist
+2021-01 to 2021-04
+
+SENTIMENT ANALYSIS
+NLP, TensorFlow
+Data Scientist
+2020-06 to 2020-09
+
+AVAILABILITY
+Available for full-time positions
+Can start in 1 month

@@ -1,0 +1,65 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Marie Claire Ingabire
+Email: marie.ingabire@icloud.com
+Phone: +250 733 234 567
+Location: Kigali, Rwanda
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Passionate frontend specialist with 4 years of experience creating beautiful,
+accessible web applications. Expert in React ecosystem, TypeScript, and modern
+CSS. Also skilled in Node.js backend development with MongoDB.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, HTML, CSS, SCSS
+- Frontend: Next.js, React, Redux, Framer Motion
+- Backend: Node.js, Express, Next.js API routes
+- Database: MongoDB, Firebase
+- Tools: Figma, Git, VS Code, Vercel
+- Testing: Jest, React Testing Library, Cypress
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Frontend Developer
+CreativeHub Rwanda | Sep 2021 - Present
+- Built 8 client websites using Next.js and TypeScript
+- Created design system with 50+ reusable components
+- Implemented animations with Framer Motion
+- Optimized Core Web Vitals to 95+ scores
+
+Junior Frontend Developer
+Bloom Agency | Mar 2020 - Aug 2021
+- Developed React applications for startups
+- Built REST API integrations with Node.js
+- Worked with MongoDB for content management
+- Collaborated with UX team on accessibility
+
+Intern
+Tech Startup Inc. | Jan 2020 - Feb 2020
+- Learning frontend development basics
+- Contributed to open source projects
+
+========================================
+EDUCATION
+========================================
+Higher Diploma in Software Development
+Kigali Tech Academy | 2018 - 2020
+Distinction graduate
+
+Professional Certifications:
+- Meta Frontend Developer Certificate (2023)
+- TypeScript Deep Dive (2022)
+
+========================================
+PERSONAL PROJECTS
+========================================
+- Portfolio website with Next.js (95 Lighthouse score)
+- Chrome extension for productivity (500+ users)
+- Contributed to African languages open-source project

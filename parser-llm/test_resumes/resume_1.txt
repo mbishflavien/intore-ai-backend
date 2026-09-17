@@ -1,0 +1,43 @@
+DESIGN SYSTEM — IHINGA AI (must match the existing landing page exactly):
+
+STACK: React 19 + Vite + Tailwind v4 + lucide-react icons. No new dependencies.
+
+BASE: Pure black background (bg-black), white text. This is a monochrome, editorial,
+luxury-dark aesthetic — NOT a colorful SaaS dashboard.
+
+TYPE:
+- Display/headings: "Instrument Serif" (font-serif). Large, tight tracking, leading-[1.05].
+  Signature treatment: UPPERCASE words with italic font-light lowercase connectors,
+  e.g. FARM <i>command</i>. Use for page titles and hero headings.
+- Body/UI: "Inter" (font-sans), weights 300–600. Secondary text uses text-white/80,
+  text-white/70, text-white/60.
+- Micro-labels: uppercase, tracking-widest, text-[11px], text-white/50.
+
+CHROME (nav, cards, buttons, text) IS MONOCHROME:
+- Cards / glass panels: bg-white/[0.03] to bg-white/5, border border-white/10, backdrop-blur,
+  rounded-2xl or rounded-3xl. Small icon chips: bg-white/10 border border-white/20 rounded-xl.
+- Primary button: bg-white text-black rounded-full, hover:scale-105 active:scale-95.
+- Secondary button: border border-white/40 backdrop-blur-sm rounded-full hover:bg-white/10.
+- Dividers/borders: white/10 (subtle), white/20 (visible).
+
+COLOR IS FOR DATA/STATUS ONLY — never for chrome. Use a restrained, desaturated palette
+that fits the dark mood:
+- Healthy / low risk / positive: emerald-400
+- Watch / warning / wealth: amber-400
+- Critical / danger / negative: red-400 (or orange-500 for high-but-not-critical)
+- Water / data / info: sky-400
+- Science / research: violet-400
+Use these at ~70–90% opacity, as text, thin bars, dots, chart strokes — sparingly.
+
+MOTION: transitions use cubic-bezier(0.76, 0, 0.24, 1) ~400–500ms. Cards lift subtly on hover
+(translateY + faint border brighten). Live indicators use a pulsing dot.
+
+LOGO MARK: 2×2 grid of rounded squares in white opacities (#fff, 0.7, 0.7, 0.3).
+
+RULES:
+- The page <h1> and its content MUST match the sidebar label that routed to it. Never reuse
+  another role's screen under a different title.
+- Every list/table/feed has a designed empty state and a skeleton-shimmer loading state.
+- Centralize this role's demo data in a single mock object so all numbers stay consistent.
+- Charts: axis ticks and tooltips must be readable on black (text-white/60). Keep chart chrome
+  minimal — thin lines, no heavy gridlines.

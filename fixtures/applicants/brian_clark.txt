@@ -1,0 +1,38 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Brian Clark
+Email: brian.clark@mailinator.com
+Location: Kampala, Uganda (requires visa sponsorship)
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Sample resume. Lorem ipsum dolor sit amet. Generated content. Not real work
+experience. This is test data.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- PHP
+- WordPress
+- Basic MySQL
+- No TypeScript
+- No MongoDB
+- No Node.js
+
+========================================
+WORK EXPERIENCE
+========================================
+
+WordPress Developer
+Web Agency | 2019 - Present
+- WordPress sites
+- PHP customization
+- MySQL only
+
+========================================
+EDUCATION
+========================================
+Web Development Certificate
+Online Course | 2018

@@ -1,0 +1,65 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Angelique Mukamana
+Email: angelique.m@outlook.com
+Phone: +250 731 234 567
+Location: Kigali, Rwanda
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Dedicated software engineer with 5 years building production applications.
+Specialized in TypeScript, React, and Node.js stack. Proven track record of
+delivering maintainable, well-tested code. Experience with MongoDB databases.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, SQL
+- Frontend: Next.js, React, Redux Toolkit, Material UI
+- Backend: Node.js, Express, Next.js Server Actions
+- Database: MongoDB, PostgreSQL, Firebase
+- Tools: Git, Docker, Vercel, MongoDB Compass
+- Testing: Jest, React Testing Library
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Software Engineer
+EduTech Rwanda | May 2021 - Present
+- Building learning management system with Next.js
+- Node.js backend APIs with TypeScript
+- MongoDB for flexible content schemas
+- Features serving 20K+ students
+- Code review and pair programming practices
+
+Full Stack Developer
+HealthTech Africa | Aug 2019 - Apr 2021
+- Developed patient management system
+- React frontend with complex forms
+- REST API development with Node.js
+- MongoDB database design and optimization
+
+Junior Developer
+Digital Solutions Ltd | Feb 2019 - Jul 2019
+- Web application development
+- Bug fixes and feature additions
+
+========================================
+EDUCATION
+========================================
+BSc Information Technology
+Kigali Independent University | 2015 - 2019
+Second Class Upper
+
+Meta Full Stack Developer Certificate
+Meta | 2022
+
+========================================
+COMMUNITY
+========================================
+- Women in Tech Rwanda mentor
+- Technical interviewer for tech companies
+- Regular open source contributor

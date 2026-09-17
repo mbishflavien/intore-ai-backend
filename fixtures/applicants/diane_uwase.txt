@@ -1,0 +1,64 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Diane Uwase
+Email: diane.uwase@gmail.com
+Phone: +250 782 345 678
+Location: Kigali, Rwanda
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+AI-forward software engineer with 6 years of experience, specializing in
+building intelligent applications. Expert in TypeScript, Next.js, and Node.js.
+Leading AI integration initiatives including Gemini and OpenAI implementations.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, Python
+- Frontend: Next.js, React, Redux Toolkit, TypeScript
+- Backend: Node.js, Express, FastAPI, GraphQL
+- Database: MongoDB, PostgreSQL, Pinecone (vectors)
+- AI/ML: Gemini API, OpenAI, LangChain, Prompt Engineering
+- DevOps: Docker, GitHub Actions, Vercel, AWS
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Senior Software Engineer - AI Focus
+InnovateAI Africa | Feb 2022 - Present
+- Led development of AI-powered recruitment platform
+- Integrated Gemini API for candidate screening automation
+- Built TypeScript/Next.js frontend serving 10K+ daily users
+- MongoDB architecture for scalable document storage
+- Mentored team on AI best practices
+
+Software Engineer
+Fintech Rwanda | Aug 2019 - Jan 2022
+- Developed payment processing system
+- Node.js microservices with TypeScript
+- React admin dashboard with real-time updates
+- Database optimization and schema design
+
+Developer
+StartUp Kigali | Jan 2018 - Jul 2019
+- Built MVP for logistics tracking app
+- Full-stack with MongoDB backend
+
+========================================
+EDUCATION
+========================================
+MSc Computer Science (AI Specialization)
+African Institute for Mathematical Sciences | 2021
+
+BSc Information Systems
+Kigali Business University | 2014 - 2018
+
+========================================
+PUBLICATIONS & TALKS
+========================================
+- "Practical AI Integration in Web Applications" - DevConf 2023
+- Technical blog on Medium (10K+ followers)
+- Open-source AI tooling contributor

@@ -1,0 +1,63 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Emmanuel Niyonzima
+Email: emmanuel.niyonzima@proton.me
+Phone: +250 781 456 789
+Location: Kigali, Rwanda
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Experienced full-stack developer with 7 years building enterprise applications.
+Strong expertise in TypeScript ecosystem, cloud-native development, and database
+architecture. Successfully delivered 20+ projects for clients across Africa.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, Rust (learning), SQL
+- Frontend: Next.js, React, Angular, Redux, Tailwind
+- Backend: Node.js, NestJS, Express, GraphQL
+- Database: MongoDB, PostgreSQL, SQLite, IndexedDB
+- Cloud: AWS, Vercel, Railway, Supabase
+- AI: Prompt Engineering, OpenAI API, Vector Databases
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Lead Developer
+Pan-African Digital | Mar 2020 - Present
+- Technical lead for 12-person distributed team
+- Architected microservices platform serving 500K users
+- MongoDB Expert: Designed schemas handling 1TB+ data
+- Implemented AI features using Gemini for content moderation
+
+Senior Developer
+East Africa Tech Solutions | Jan 2018 - Feb 2020
+- Built fintech application processing $2M+ transactions
+- Next.js frontend with Node.js backend
+- Led database migration from MySQL to MongoDB
+- Achieved 99.9% uptime SLA
+
+Developer
+Freelance | 2016 - 2017
+- Built websites for local businesses
+- WordPress, PHP, basic JavaScript
+
+========================================
+EDUCATION
+========================================
+Master of Science in Software Engineering
+University of Kigali | 2018 - 2020
+
+Bachelor of Science in Information Technology
+Kigali Independent University | 2012 - 2016
+
+========================================
+COMMUNITY
+========================================
+- Organizer of Kigali JavaScript Meetup
+- Technical writer for LogRocket and freeCodeCamp
+- Open source maintainer (5K+ GitHub stars on personal projects)

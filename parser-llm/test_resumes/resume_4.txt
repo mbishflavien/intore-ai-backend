@@ -1,0 +1,63 @@
+PAUL MUGISHA
+Kampala, Uganda
+Email: paul.mugisha@email.com
+Phone: +256 701 234 567
+
+DEVOPS ENGINEER
+
+DevOps Engineer with 5 years of experience in CI/CD, cloud infrastructure, and automation. Expert in containerization and infrastructure as code.
+
+SKILLS
+- AWS (Expert, 4 years)
+- Docker (Expert, 5 years)
+- Kubernetes (Advanced, 3 years)
+- Jenkins (Expert, 4 years)
+- Terraform (Advanced, 3 years)
+- Linux (Expert, 5 years)
+- Python (Intermediate, 2 years)
+
+LANGUAGES
+- English: Fluent
+- Luganda: Native
+- French: Basic
+
+WORK EXPERIENCE
+
+UGANDA CLOUD SERVICES, Kampala
+DevOps Engineer
+2020-01 to Present
+- Manage cloud infrastructure on AWS
+- Implement CI/CD pipelines
+- Container orchestration with Kubernetes
+- Technologies: AWS, Docker, Jenkins
+
+TEK SOLUTIONS, Kampala
+Systems Administrator
+2017-06 to 2019-12
+- Server management and monitoring
+- Database administration
+- Linux system administration
+
+EDUCATION
+MAKERERE UNIVERSITY, Kampala
+Bachelor's in Computer Science
+2013-2017
+
+CERTIFICATIONS
+AWS Solutions Architect, 2020
+Kubernetes Administrator, 2021
+
+PROJECTS
+CI/CD PIPELINE AUTOMATION
+Jenkins, Docker
+DevOps Engineer
+2021-01 to 2021-04
+
+CLOUD MIGRATION
+AWS, Terraform
+DevOps Engineer
+2020-06 to 2020-09
+
+AVAILABILITY
+Available for full-time positions
+Can start in 1 month

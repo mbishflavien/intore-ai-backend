@@ -1,0 +1,64 @@
+DAVID NSENGIMANA
+Nairobi, Kenya
+Email: david.nsengimana@email.com
+Phone: +254 712 345 678
+GitHub: https://github.com/davidnsengimana
+
+FULL STACK DEVELOPER
+
+Full Stack Developer with 6 years of experience building web applications. Strong background in both frontend and backend development with modern technologies.
+
+SKILLS
+- JavaScript (Expert, 6 years)
+- Node.js (Expert, 5 years)
+- React (Expert, 4 years)
+- TypeScript (Advanced, 3 years)
+- MongoDB (Advanced, 4 years)
+- PostgreSQL (Advanced, 3 years)
+- Docker (Intermediate, 2 years)
+
+LANGUAGES
+- English: Fluent
+- Swahili: Native
+- French: Basic
+
+WORK EXPERIENCE
+
+KENYA DIGITAL HUB, Nairobi
+Senior Full Stack Developer
+2020-01 to Present
+- Led development of e-commerce platform
+- Built REST and GraphQL APIs
+- Mentored junior developers
+- Technologies: React, Node.js, MongoDB
+
+WEB SOLUTIONS AFRICA, Nairobi
+Full Stack Developer
+2017-06 to 2019-12
+- Developed client websites
+- Implemented payment integrations
+- Technologies: JavaScript, PHP, MySQL
+
+EDUCATION
+KENYATTA UNIVERSITY, Nairobi
+Bachelor's in Computer Science
+2013-2017
+
+CERTIFICATIONS
+Meta Full Stack Developer Certificate, 2020
+
+PROJECTS
+E-COMMERCE PLATFORM
+MERN Stack
+Full Stack Developer
+2020-06 to 2020-12
+https://github.com/davidnsengimana/ecommerce
+
+SCHOOL MANAGEMENT SYSTEM
+PHP, MySQL
+Backend Developer
+2018-01 to 2018-06
+
+AVAILABILITY
+Available for full-time positions
+Can start immediately

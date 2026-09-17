@@ -1,0 +1,64 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Claudine Umutoni
+Email: claudine.umutoni@gmail.com
+Phone: +250 729 876 123
+Location: Kigali, Rwanda
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Creative full-stack developer with 4 years of experience crafting user-centric
+digital products. Strong in TypeScript, React ecosystem, and Node.js backend.
+Passionate about performance and developer experience.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, HTML, CSS
+- Frontend: Next.js, React, Redux, Tailwind CSS
+- Backend: Node.js, Express, Next.js API
+- Database: MongoDB, PostgreSQL, SQLite
+- Tools: Git, Figma, Storybook, Vercel
+- Testing: Jest, Cypress, Playwright
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Frontend Developer
+DesignFirst Agency | Jun 2021 - Present
+- Lead frontend developer for client projects
+- Built 12+ production Next.js applications
+- Implemented design systems and component libraries
+- TypeScript-first approach across all projects
+- Node.js for backend APIs and serverless functions
+
+Junior Developer
+Pixel Perfect Studio | Aug 2019 - May 2021
+- React development for startup clients
+- Built REST API integrations
+- MongoDB for content management systems
+- Responsive design implementation
+
+Intern
+LocalTech Rwanda | Jan 2019 - Jul 2019
+- Frontend development learning
+- WordPress customization
+
+========================================
+EDUCATION
+========================================
+Diploma in Web Development
+Moringa School Kenya (Remote) | 2018 - 2019
+
+Google UX Design Certificate
+Coursera | 2023
+
+========================================
+PERSONAL WORK
+========================================
+- Award-winning portfolio at claudineumutoni.dev
+- Dribbble shots with 2K+ likes
+- YouTube tutorials on React (5K subscribers)

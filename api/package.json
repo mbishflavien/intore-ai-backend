@@ -1,0 +1,18 @@
+{
+  "name": "@umurava-ai/api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@umurava-ai/engine": "0.0.1",
+    "@umurava-ai/shared": "0.0.1",
+    "dotenv": "^16.4.5",
+    "mongodb": "^6.15.0",
+    "pdf-parse": "^1.1.1"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

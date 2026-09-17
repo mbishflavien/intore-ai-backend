@@ -1,0 +1,60 @@
+ROBERT KALISA
+Kampala, Uganda
+Email: robert.kalisa@email.com
+Phone: +256 702 345 678
+
+CYBERSECURITY SPECIALIST
+
+Cybersecurity Professional with 4 years of experience in network security, penetration testing, and security operations. Committed to protecting organizational assets.
+
+SKILLS
+- Network Security (Advanced, 4 years)
+- Penetration Testing (Intermediate, 2 years)
+- SIEM (Intermediate, 2 years)
+- Firewalls (Advanced, 3 years)
+- Linux (Advanced, 4 years)
+- Python (Intermediate, 2 years)
+
+LANGUAGES
+- English: Fluent
+- Luganda: Native
+- French: Conversational
+
+WORK EXPERIENCE
+
+UGANDA SECURITY SOLUTIONS, Kampala
+Security Analyst
+2020-06 to Present
+- Monitor security operations center
+- Conduct vulnerability assessments
+- Implement security policies
+
+IT SERVICES UGANDA, Kampala
+Junior Security Engineer
+2018-06 to 2020-05
+- Support security infrastructure
+- Log analysis and incident response
+
+EDUCATION
+MAKERERE UNIVERSITY, Kampala
+Bachelor's in Computer Engineering
+2014-2018
+
+CERTIFICATIONS
+CompTIA Security+, 2020
+CEH (Certified Ethical Hacker), 2021
+
+PROJECTS
+SECURITY AUDIT
+Nessus, Wireshark
+Security Analyst
+2021-01 to 2021-06
+
+NETWORK HARDENING
+Linux, Firewalls
+Security Engineer
+2020-01 to 2020-06
+
+AVAILABILITY
+Available for full-time positions
+Can start in 2 weeks

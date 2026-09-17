@@ -1,0 +1,65 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Gilbert Nshimiyimana
+Email: gilbert.nsh@protonmail.com
+Phone: +250 735 678 901
+Location: Kigali, Rwanda
+LinkedIn: linkedin.com/in/gilbertnshimiyimana
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+System architect and full-stack developer with 8 years building large-scale
+web applications. Deep expertise in TypeScript, distributed systems, and
+data-intensive applications. MongoDB expert with production experience.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, Python, Java, C#
+- Frontend: Next.js, React, Angular, Vue.js, Redux
+- Backend: Node.js, Express, NestJS, Django, Spring Boot
+- Database: MongoDB (expert), PostgreSQL, MySQL, Redis
+- Cloud: AWS, GCP, Azure, Vercel, Railway
+- Architecture: Microservices, Event-driven, CQRS
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Principal Engineer
+PanAfrica Tech | Jan 2022 - Present
+- Technical architecture for platform serving 1M+ users
+- TypeScript/Node.js microservices on Kubernetes
+- MongoDB Atlas with global clusters
+- Real-time features with millions of daily connections
+- Team lead for 8 engineers
+
+Senior Developer
+Financial Services Corp | Apr 2019 - Dec 2021
+- Led core banking system modernization
+- Next.js customer portal
+- Complex MongoDB aggregations for reporting
+- Performance optimization reducing latency by 70%
+
+Developer
+Various Startups | 2016 - 2019
+- Full-stack development across industries
+- Built MVP for 5 startups
+
+========================================
+EDUCATION
+========================================
+BSc Computer Science & Engineering
+University of Rwanda | 2012 - 2016
+
+AWS Solutions Architect Professional
+MongoDB Advanced Developer Certification
+
+========================================
+CONFERENCE SPEAKER
+========================================
+- MongoDB World 2023 - "Scaling MongoDB to Millions"
+- NodeConf Africa 2022 - "TypeScript at Scale"
+- Various local tech meetups

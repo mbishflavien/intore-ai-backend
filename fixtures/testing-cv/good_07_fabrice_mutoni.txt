@@ -1,0 +1,65 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Fabrice Mutoni
+Email: fabrice.mutoni@outlook.com
+Phone: +250 724 567 890
+Location: Kigali, Rwanda
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Backend-focused developer with 5 years building robust APIs and services.
+Expert in Node.js, TypeScript, and database design. Extensive MongoDB 
+experience including aggregation pipelines and replica sets.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, Go
+- Backend: Node.js, Express, NestJS, gRPC
+- Database: MongoDB, PostgreSQL, Redis, Elasticsearch
+- APIs: REST, GraphQL, WebSocket, Webhook integrations
+- DevOps: Docker, Kubernetes, AWS, GCP
+- Testing: Jest, Mocha, Supertest, k6
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Backend Engineer
+PaymentHub Africa | Mar 2021 - Present
+- Architect of payment processing API handling $5M/day
+- Node.js with TypeScript, MongoDB for transaction data
+- Designed aggregation pipelines for real-time analytics
+- Implemented caching layer with Redis
+- 99.99% uptime achieved
+
+API Developer
+TechConnect Services | Jul 2019 - Feb 2021
+- Built REST APIs for mobile app integration
+- Node.js backend with Express
+- MongoDB database with sharding setup
+- Documentation with Swagger/OpenAPI
+
+Junior Developer
+DataFirst Ltd | Sep 2018 - Jun 2019
+- Backend development support
+- Database maintenance and queries
+
+========================================
+EDUCATION
+========================================
+BSc Software Engineering
+Rwanda Coding Academy | 2014 - 2018
+Top 5% of class
+
+MongoDB Certified Developer
+MongoDB University | 2022
+
+========================================
+OPEN SOURCE
+========================================
+- Maintainer of popular Node.js validation library
+- Contributor to NestJS ecosystem
+- Author of MongoDB migration tools

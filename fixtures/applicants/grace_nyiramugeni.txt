@@ -1,0 +1,66 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Grace Nyiramugeni
+Email: grace.nyiramugeni@gmail.com
+Phone: +250 739 012 345
+Location: Kigali, Rwanda
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Analytical full-stack developer with 5 years of experience building data-driven
+applications. Expertise in TypeScript, modern web frameworks, and MongoDB.
+Focused on building reliable, maintainable systems.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, Python, SQL, R
+- Frontend: Next.js, React, Redux, Material UI, Tailwind
+- Backend: Node.js, Express, FastAPI, GraphQL
+- Database: MongoDB, PostgreSQL, BigQuery, Elasticsearch
+- Analytics: Tableau, Power BI, D3.js
+- Tools: Git, Jupyter, MongoDB Compass, VS Code
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Data-Informed Developer
+Analytics Rwanda | Mar 2021 - Present
+- Built analytics dashboard with Next.js
+- Node.js APIs for data processing
+- MongoDB for raw event storage
+- PostgreSQL for aggregated data
+- Created automated reporting system
+
+Software Developer
+Research Tech Africa | Jun 2019 - Feb 2021
+- Developed survey platform
+- React frontend with TypeScript
+- Node.js backend with MongoDB
+- Data visualization components
+
+Junior Developer
+DataFirst Ltd | Aug 2018 - May 2019
+- Backend development
+- Database queries and reports
+
+========================================
+EDUCATION
+========================================
+BSc Statistics and Computer Science
+University of Rwanda | 2014 - 2018
+
+Data Engineering Certificate
+DataCamp | 2022
+
+MongoDB for Data Analysis
+MongoDB University | 2023
+
+========================================
+RESEARCH PUBLICATIONS
+========================================
+- Co-authored paper on ML in healthcare
+- Presented at East Africa Research Conference

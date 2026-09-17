@@ -1,0 +1,64 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Joseph Kayumba
+Email: joseph.kayumba@googlemail.com
+Phone: +250 720 876 543
+Location: Kigali, Rwanda
+GitHub: github.com/josephkayumba
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Versatile full-stack developer with 5 years of experience building end-to-end
+web solutions. Strong background in TypeScript, React, Node.js, and MongoDB.
+Track record of delivering high-quality code on time.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, Python, Bash
+- Frontend: Next.js, React, Redux, Material UI, Tailwind
+- Backend: Node.js, Express, FastAPI, GraphQL
+- Database: MongoDB, PostgreSQL, Redis
+- Infrastructure: Docker, DigitalOcean, AWS
+- Practices: Clean Code, SOLID principles, Design Patterns
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Full Stack Engineer
+DataFlow Systems | Apr 2021 - Present
+- Designed and built real-time analytics dashboard
+- Node.js backend processing 100K events/minute
+- Next.js frontend with complex data visualizations
+- MongoDB for time-series data storage
+- Reduced infrastructure costs by 30%
+
+Software Developer
+Smart Solutions Ltd | Jun 2019 - Mar 2021
+- Built e-commerce platform with 500+ products
+- Implemented payment processing with Stripe
+- Created admin dashboard with React and Node.js
+- Database migrations and optimization
+
+Junior Developer
+WebCraft Rwanda | Aug 2018 - May 2019
+- Developed WordPress and custom PHP sites
+- Basic JavaScript and jQuery work
+- Client support and maintenance
+
+========================================
+EDUCATION
+========================================
+Bachelor of Computer Applications
+University of Rwanda | 2014 - 2018
+First Class Honors
+
+========================================
+CONTINUOUS LEARNING
+========================================
+- Completed 50+ online courses on Udemy, Coursera
+- Regular tech blog contributor
+- Active in local developer community

@@ -1,0 +1,62 @@
+JAMES BYAMUKAMA
+Kigali, Rwanda
+Email: james.byamukama@email.com
+Phone: +250 785 345 678
+GitHub: https://github.com/jamesb
+
+MOBILE DEVELOPER
+
+Mobile Developer with 4 years of experience building native and cross-platform mobile applications for Android and iOS.
+
+SKILLS
+- Flutter (Expert, 3 years)
+- Dart (Expert, 3 years)
+- Android (Advanced, 4 years)
+- Kotlin (Intermediate, 2 years)
+- iOS (Intermediate, 1 year)
+- Firebase (Advanced, 3 years)
+- REST APIs (Advanced, 3 years)
+
+LANGUAGES
+- English: Fluent
+- Kinyarwanda: Native
+- French: Basic
+
+WORK EXPERIENCE
+
+RWANDA MOBILE APPS, Kigali
+Mobile Developer
+2020-06 to Present
+- Build Flutter applications for clients
+- Integrate REST APIs and Firebase
+- Publish apps to App Store and Play Store
+
+APP TECH RWANDA, Kigali
+Junior Android Developer
+2018-06 to 2020-05
+- Develop Android applications
+- Bug fixing and app maintenance
+
+EDUCATION
+UNIVERSITY OF RWANDA, Kigali
+Bachelor's in Software Engineering
+2014-2018
+
+CERTIFICATIONS
+Flutter Development Certificate, 2020
+
+PROJECTS
+E-WALLET APP
+Flutter, Firebase
+Mobile Developer
+2021-01 to 2021-06
+https://github.com/jamesb/ewallet
+
+FOOD DELIVERY APP
+Flutter, REST API
+Mobile Developer
+2020-06 to 2020-12
+
+AVAILABILITY
+Available for full-time positions
+Can start in 2 weeks

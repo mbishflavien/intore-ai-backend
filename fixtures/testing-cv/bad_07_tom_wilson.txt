@@ -1,0 +1,39 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Tom Wilson
+Email: tom.wilson@outlook.com
+Phone: +250 733 444 555
+Location: Kigali, Rwanda (NO MONGODB EXPERIENCE)
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Full-stack developer with experience in various technologies. Have worked
+extensively with SQL databases but never with MongoDB.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- JavaScript
+- React
+- Node.js
+- PostgreSQL
+- MySQL
+- SQL Server
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Developer
+SQL Solutions Inc | 2019 - Present
+- Database management with SQL Server
+- Backend development with SQL
+- Reporting and analytics
+
+========================================
+EDUCATION
+========================================
+BSc Information Systems
+IT University | 2015 - 2019

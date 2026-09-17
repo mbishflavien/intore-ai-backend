@@ -1,0 +1,68 @@
+========================================
+CANDIDATE PROFILE
+========================================
+Name: Eric Musabyimana
+Email: eric.musabyimana@outlook.com
+Phone: +250 740 123 456
+Location: Kigali, Rwanda
+
+========================================
+PROFESSIONAL SUMMARY
+========================================
+Customer-focused software engineer with 6 years building web applications. 
+Strong in TypeScript, React ecosystem, and Node.js backend development. 
+MongoDB experience with complex data modeling. Committed to quality code.
+
+========================================
+TECHNICAL SKILLS
+========================================
+- Languages: TypeScript, JavaScript, HTML, CSS, SQL
+- Frontend: Next.js, React, Redux Toolkit, Tailwind CSS
+- Backend: Node.js, Express, NestJS, tRPC
+- Database: MongoDB, PostgreSQL, MySQL, SQLite
+- Tools: Git, Docker, Postman, MongoDB Compass
+- Testing: Jest, Mocha, Supertest
+
+========================================
+WORK EXPERIENCE
+========================================
+
+Senior Software Engineer
+CustomerFirst Tech | Jan 2022 - Present
+- Lead developer for CRM platform
+- Next.js application with 50+ pages
+- Node.js microservices with TypeScript
+- MongoDB for customer and interaction data
+- Achieved 100% test coverage on critical paths
+
+Software Developer
+ServiceHub Africa | Apr 2019 - Dec 2021
+- Built appointment booking system
+- React frontend with Redux
+- Node.js REST API backend
+- MongoDB database with validation
+- Served 10K+ daily bookings
+
+Junior Developer
+TechServe Ltd | Jun 2018 - Mar 2019
+- Full-stack development
+- Bug fixes and features
+
+========================================
+EDUCATION
+========================================
+BSc Computer Science
+Kigali Independent University | 2014 - 2018
+
+NestJS Developer Certification
+Nexo Academy | 2022
+
+Advanced Testing Strategies
+Test Automation University | 2023
+
+========================================
+TECHNICAL BLOGGING
+========================================
+- Author onDEV.to (3K+ followers)
+- Topics: TypeScript, testing, MongoDB best practices
+- Workshop presenter at local meetups

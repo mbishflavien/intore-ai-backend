@@ -1,0 +1,16 @@
+node_modules
+.next
+dist
+coverage
+.env
+.env.local
+.env.*
+!.env.example
+*.gguf
+*.tsbuildinfo
+
+# Local resume parser artifacts
+**/parser-llm/venv/
+**/parser-llm/models/
+**/parser-llm/parser.log
+**/__pycache__/
