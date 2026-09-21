@@ -41,7 +41,7 @@
 
 | # | Task | Description | Priority | Deadline |
 |---|------|-------------|----------|----------|
-| 1 | Fix notification route bug | `/api/notifications/:id/read` handler misroutes at api/src/server.ts:1570 — condition checks `parts[2] === "read"` with `parts.length === 3`, conflicts with `/api/notifications/read-all` | **High** | 1 week |
+| 1 | ~~Fix notification route bug~~ ✅ Done | `/api/notifications/:id/read` now matches `parts.length === 4 && parts[3] === "read"`, loads the notification, and verifies ownership (403) — conflicts with `/api/notifications/read-all` resolved | — | — |
 | 2 | ~~Fix resume parser cross-platform path~~ ✅ Done | resume.ts now resolves `parser-llm` via `PARSER_DIR`, `cwd`, and relative paths — no hardcoded Linux path | — | — |
 | 3 | ~~Add `.env.example`~~ ✅ Done | `api/.env.example` documents all required vars: `GEMINI_API_KEY`, `GEMINI_MODEL`, `MONGODB_URI`, `MONGODB_DB`, `JWT_SECRET`, `API_PORT`, `PARSER_DIR`, `PARSER_SERVICE_URL`, `SCREENING_TOP_N`, `SCREENING_MIN_SCORE` | — | — |
 | 4 | Migrate to proper HTTP framework | Replace raw `node:http` with Express or Fastify for middleware support, route grouping, error handling | Medium | 2 weeks |
@@ -110,7 +110,7 @@
 
 ## Known Bugs to Fix Immediately
 
-1. **Notification route conflict** — `api/src/server.ts:1570` `/api/notifications/:id/read` matches when it should be `/api/notifications/read-all` due to path ordering (FS Dev 1 #1)
+1. ~~Notification route conflict~~ ✅ Fixed — `/api/notifications/:id/read` guard corrected to `parts.length === 4 && parts[3] === "read"`; ownership check added (404/403) (FS Dev 1 #1)
 2. ~~Parser hardcoded path~~ ✅ Fixed — resume.ts resolves `parser-llm` relatively via `PARSER_DIR`/`cwd`
 3. ~~No `.env.example`~~ ✅ Fixed — `api/.env.example` added
 4. **Frontend bug** — admin nav hidden in `recruiter/layout.tsx:107` (tracked in **intore-ai-frontend**)
