@@ -1575,7 +1575,7 @@ const server = createServer(async (request, response) => {
   }
 
   // Mark notification as read
-  if (parts[0] === "api" && parts[1] === "notifications" && parts.length === 4 && parts[3] === "read" && request.method === "POST") {
+  if (parts[0] === "api" && parts[1] === "notifications" && parts.length === 3 && parts[2] === "read" && request.method === "POST") {
     const user = await getUserFromRequest(request);
     if (!user) {
       writeJson(response, 401, { error: "Unauthorized" });
@@ -1583,16 +1583,6 @@ const server = createServer(async (request, response) => {
     }
 
     const notificationId = parts[2];
-    const notification = await notificationRepo.findById(notificationId);
-    if (!notification) {
-      writeJson(response, 404, { error: "Notification not found" });
-      return;
-    }
-    if (notification.userId !== user.id) {
-      writeJson(response, 403, { error: "Forbidden" });
-      return;
-    }
-
     await notificationRepo.markAsRead(notificationId);
     writeJson(response, 200, { success: true });
     return;
