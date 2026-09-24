@@ -606,6 +606,113 @@ export interface Interview {
   updatedAt: string;
 }
 
+export type TrainingLevel = "beginner" | "intermediate" | "advanced";
+export type TrainingQuizOption = string;
+
+export interface TrainingQuizQuestion {
+  question: string;
+  options: TrainingQuizOption[];
+  answerIndex: number;
+  explanation: string;
+}
+
+export interface TrainingUnit {
+  id: string;
+  title: string;
+  minutes: number;
+  content: string;
+  checklist: string[];
+  quiz?: TrainingQuizQuestion;
+}
+
+export interface TrainingModule {
+  id: string;
+  slug: string;
+  skill: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  level: TrainingLevel;
+  estimatedMinutes: number;
+  relatedSkills: string[];
+  tags: string[];
+  units: TrainingUnit[];
+  externalResources: ProofReference[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TrainingProgress {
+  id: string;
+  applicantId: string;
+  moduleId: string;
+  completedUnitIds: string[];
+  startedAt: string;
+  lastActivityAt: string;
+  completedAt?: string;
+}
+
+export interface TrainingRecommendation {
+  skill: string;
+  module?: Pick<TrainingModule, "id" | "slug" | "title" | "level" | "estimatedMinutes">;
+  jobTitles: string[];
+  jobCount: number;
+  reason: string;
+}
+
+export interface PracticeChallengeLite {
+  challengeId: string;
+  jobId: string;
+  jobTitle: string;
+  title: string;
+  type: ProofChallengeType;
+  requiredSkills: string[];
+}
+
+export type MentorTurnRole = "user" | "mentor";
+
+export interface MentorTurn {
+  id: string;
+  role: MentorTurnRole;
+  content: string;
+  createdAt: string;
+}
+
+export interface MentorQuizState {
+  question: string;
+  options: string[];
+  answerIndex: number;
+  explanation: string;
+  topic: string;
+  questionIndex: number;
+}
+
+export interface MentorSession {
+  id: string;
+  applicantId: string;
+  skill: string;
+  turns: MentorTurn[];
+  pendingQuiz: MentorQuizState | null;
+  correctCount: number;
+  questionIndex: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MentorChatRequest {
+  skill?: string;
+  message: string;
+  sessionId?: string;
+}
+
+export interface MentorChatResponse {
+  sessionId: string;
+  skill: string;
+  reply: string;
+  quiz: Pick<MentorQuizState, "question" | "options" | "questionIndex"> | null;
+  correctCount: number;
+}
+
 export type NotificationType = 'interview_scheduled' | 'status_update' | 'application_received' | 'job_published';
 
 export interface Notification {

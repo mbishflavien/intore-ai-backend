@@ -9,6 +9,10 @@ coverage
 *.gguf
 *.tsbuildinfo
 
+# Local dev server logs
+dev-api.log
+dev-api.log.err
+
 # Local resume parser artifacts
 **/parser-llm/venv/
 **/parser-llm/models/

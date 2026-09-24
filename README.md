@@ -58,3 +58,17 @@ Set `GEMINI_API_KEY` in `api/.env` for live AI reasoning (optional; the platform
 ## Frontend
 
 The Next.js UI is maintained in the **intore-ai-frontend** repository. It talks to this API over HTTP via `NEXT_PUBLIC_API_BASE_URL` (default `http://localhost:4000`).
+
+## Demo data
+
+The platform stores data **in memory** unless `MONGODB_URI` is set, so accounts, jobs, and challenges reset every time the API process restarts. `npm run dev:api` uses `tsx watch`, which restarts on every file change — re-seed after each restart:
+
+```bash
+node scripts/seed-demo.mjs
+```
+
+It idempotently registers 8 recruiters and the two demo accounts, creates 3 ProofHire challenges (coding, SQL, document), and publishes 14 real jobs (Kigali + remote). Every account uses password `demo1234`:
+
+- Recruiters — e.g. `recruiting@rwandafinserve.rw`, `talent@vista-remote.io` (see `scripts/seed-demo.mjs` for the full list)
+- Applicant — `applicant@intore.ai`
+- Legacy demo recruiter — `recruiter@intore.ai`
