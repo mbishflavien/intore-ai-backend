@@ -66,6 +66,20 @@ import { getUserFromRequest, hashPassword, verifyPassword } from "./auth.js";
 import { parseApplicantsCsv } from "./csv.js";
 import { deriveProofApplicantStatus, evaluateProofSubmission } from "./proofhire.js";
 import { parseResumeUpload } from "./resume.js";
+import type { TrainingRecommendation } from "../../packages/shared/src/index.js";
+import {
+  buildMentorResponse,
+  buildSkillGapRecommendations,
+  getOrCreateMentorSession,
+  getTrainingModuleById,
+  getTrainingProgress,
+  guessSkillFromMessage,
+  listTrainingModules,
+  markTrainingUnitComplete,
+  normalizeRecommendationReason,
+  persistSession,
+  respond,
+} from "./training.js";
 
 const orchestrator = new ScreeningOrchestrator();
 const port = Number.parseInt(process.env.API_PORT ?? "4000", 10);
@@ -1697,6 +1711,205 @@ const server = createServer(async (request, response) => {
     } catch (error) {
       writeJson(response, 400, {
         error: error instanceof Error ? error.message : "Failed to update profile",
+      });
+      return;
+    }
+  }
+
+  if (request.url === "/api/training" && request.method === "GET") {
+    writeJson(response, 200, { modules: listTrainingModules() });
+    return;
+  }
+
+  if (parts[0] === "api" && parts[1] === "training" && parts.length === 3 && parts[2] === "recommendations" && request.method === "GET") {
+    const user = await getUserFromRequest(request);
+    if (!user || user.role !== "applicant") {
+      writeJson(response, 403, { error: "Only applicants can view training recommendations" });
+      return;
+    }
+
+    const profile = await profileRepo.findByApplicant(user.id);
+    const jobs = await jobRepo.findPublished();
+    const raw = buildSkillGapRecommendations({
+      profileSkills: (profile?.skills ?? []).map((skill) => skill.name),
+      jobs: jobs.map((job) => ({ requiredSkills: job.requiredSkills, title: job.title })),
+    });
+
+    const recommendations: Array<TrainingRecommendation & { reason: string }> = raw.map((recommendation) => ({
+      ...recommendation,
+      reason: normalizeRecommendationReason(recommendation),
+    }));
+
+    writeJson(response, 200, { recommendations: recommendations.slice(0, 8) });
+    return;
+  }
+
+  if (parts[0] === "api" && parts[1] === "training" && parts.length === 3 && parts[2] === "progress" && request.method === "GET") {
+    const user = await getUserFromRequest(request);
+    if (!user || user.role !== "applicant") {
+      writeJson(response, 403, { error: "Only applicants can view training progress" });
+      return;
+    }
+
+    const progress = await getTrainingProgress(user.id);
+    writeJson(response, 200, { progress });
+    return;
+  }
+
+  if (parts[0] === "api" && parts[1] === "training" && parts.length === 4 && parts[2] === "progress" && request.method === "POST") {
+    const user = await getUserFromRequest(request);
+    if (!user || user.role !== "applicant") {
+      writeJson(response, 403, { error: "Only applicants can update training progress" });
+      return;
+    }
+
+    try {
+      const body = await readJsonBody<{ unitId: string }>(request);
+      if (!body.unitId) {
+        writeJson(response, 400, { error: "unitId is required" });
+        return;
+      }
+      const progress = await markTrainingUnitComplete(user.id, parts[3], body.unitId);
+      writeJson(response, 200, { progress });
+      return;
+    } catch (error) {
+      writeJson(response, 400, {
+        error: error instanceof Error ? error.message : "Failed to update training progress",
+      });
+      return;
+    }
+  }
+
+  if (parts[0] === "api" && parts[1] === "training" && parts.length === 3 && parts[2] === "practice" && request.method === "GET") {
+    const user = await getUserFromRequest(request);
+    if (!user || user.role !== "applicant") {
+      writeJson(response, 403, { error: "Only applicants can view practice challenges" });
+      return;
+    }
+
+    const jobs = await jobRepo.findPublished();
+    const challenges: import("../../packages/shared/src/index.js").PracticeChallengeLite[] = [];
+
+    for (const job of jobs) {
+      if (!job.proofHire.enabled || !job.proofHire.challengeId) {
+        continue;
+      }
+      const challenge = await proofChallengeRepo.findById(job.proofHire.challengeId);
+      if (!challenge) {
+        continue;
+      }
+      challenges.push({
+        challengeId: challenge.id,
+        jobId: job.id,
+        jobTitle: job.title,
+        title: challenge.title,
+        type: challenge.type,
+        requiredSkills: challenge.requiredSkills,
+      });
+    }
+
+    writeJson(response, 200, { challenges });
+    return;
+  }
+
+  if (parts[0] === "api" && parts[1] === "training" && parts.length === 4 && parts[2] === "practice" && parts[3] === "evaluate" && request.method === "POST") {
+    const user = await getUserFromRequest(request);
+    if (!user || user.role !== "applicant") {
+      writeJson(response, 403, { error: "Only applicants can practice ProofHire challenges" });
+      return;
+    }
+
+    try {
+      const body = await readJsonBody<{ challengeId: string; code: string; language?: string }>(request);
+      if (!body.challengeId || typeof body.code !== "string") {
+        writeJson(response, 400, { error: "challengeId and code are required" });
+        return;
+      }
+
+      const challenge = await proofChallengeRepo.findById(body.challengeId);
+      if (!challenge) {
+        writeJson(response, 404, { error: "Challenge not found" });
+        return;
+      }
+
+      const evaluation = evaluateProofSubmission(challenge, body.code);
+      writeJson(response, 200, { evaluation, practice: true });
+      return;
+    } catch (error) {
+      writeJson(response, 400, {
+        error: error instanceof Error ? error.message : "Failed to evaluate practice submission",
+      });
+      return;
+    }
+  }
+
+  if (parts[0] === "api" && parts[1] === "training" && parts.length === 4 && parts[2] === "practice" && parts[3] !== "evaluate" && request.method === "GET") {
+    const user = await getUserFromRequest(request);
+    if (!user || user.role !== "applicant") {
+      writeJson(response, 403, { error: "Only applicants can access practice challenges" });
+      return;
+    }
+
+    const challenge = await proofChallengeRepo.findById(parts[3]);
+    if (!challenge) {
+      writeJson(response, 404, { error: "Challenge not found" });
+      return;
+    }
+
+    writeJson(response, 200, { challenge });
+    return;
+  }
+
+  if (parts[0] === "api" && parts[1] === "training" && parts.length === 3 && request.method === "GET") {
+    const module = getTrainingModuleById(parts[2]);
+    if (!module) {
+      writeJson(response, 404, { error: "Training module not found" });
+      return;
+    }
+    writeJson(response, 200, { module });
+    return;
+  }
+
+  if (request.url === "/api/mentor/chat" && request.method === "POST") {
+    const user = await getUserFromRequest(request);
+    if (!user || user.role !== "applicant") {
+      writeJson(response, 403, { error: "Only applicants can chat with the mentor" });
+      return;
+    }
+
+    try {
+      const body = await readJsonBody<{ skill?: string; message: string; sessionId?: string }>(request);
+      if (typeof body.message !== "string") {
+        writeJson(response, 400, { error: "message is required" });
+        return;
+      }
+
+      const applicantId = user.id;
+      let skill = body.skill?.trim() ?? "";
+      let sessionId = body.sessionId;
+
+      if (sessionId) {
+        const existing = (await getOrCreateMentorSession({ applicantId, sessionId })).session;
+        if (skill && existing.skill && skill !== existing.skill) {
+          sessionId = undefined;
+        }
+        skill = skill || existing.skill;
+      }
+
+      if (!skill) {
+        skill = guessSkillFromMessage(body.message, "");
+      }
+
+      const { session } = await getOrCreateMentorSession({ applicantId, sessionId, skill });
+      const result = await respond(session, body.message.trim() || "");
+      persistSession(session);
+
+      const payload = buildMentorResponse(session, result);
+      writeJson(response, 200, payload);
+      return;
+    } catch (error) {
+      writeJson(response, 400, {
+        error: error instanceof Error ? error.message : "Mentor chat failed",
       });
       return;
     }
