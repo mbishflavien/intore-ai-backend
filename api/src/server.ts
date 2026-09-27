@@ -27,7 +27,7 @@ import type {
   User,
   UserRole,
 } from "../../packages/shared/src/index.js";
-import { isTalentProfile } from "../../packages/shared/src/index.js";
+import { isTalentProfile, checkProfileCompleteness } from "../../packages/shared/src/index.js";
 
 import {
   ApplicationRepository,
@@ -62,7 +62,7 @@ import {
   toPublicUser,
   DEFAULT_PROOF_CHALLENGE_TEMPLATES,
 } from "./repositories.js";
-import { getUserFromRequest, hashPassword, verifyPassword } from "./auth.js";
+import { getUserFromRequest, hashPassword, isLegacyPasswordHash, verifyPassword } from "./auth.js";
 import { parseApplicantsCsv } from "./csv.js";
 import { deriveProofApplicantStatus, evaluateProofSubmission } from "./proofhire.js";
 import { parseResumeUpload } from "./resume.js";
@@ -229,17 +229,34 @@ function buildStarterProfile(user: { firstName: string; lastName: string; email:
       type: "Full-time",
     },
     source: "umurava_profile",
+    resumeUploaded: false,
   };
 }
 
 const server = createServer(async (request, response) => {
-  response.setHeader("Access-Control-Allow-Origin", "*");
+  // CORS allow-list (secure default: local frontend origins only).
+  // Configure via ALLOWED_ORIGINS="https://app.example.com,https://admin.example.com".
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? "http://localhost:3000,http://127.0.0.1:3000")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+  const requestOrigin = request.headers.origin;
+  if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
+    response.setHeader("Access-Control-Allow-Origin", requestOrigin);
+    response.setHeader("Vary", "Origin");
+  }
   response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
 
   if (request.method === "OPTIONS") {
     response.writeHead(204);
     response.end();
+    return;
+  }
+
+  // Minimal in-memory sliding-window rate limiter (per IP + route).
+  // A dedicated middleware replaces this during the Express/Fastify migration.
+  if (isRateLimited(request, response)) {
     return;
   }
 
@@ -537,6 +554,15 @@ const server = createServer(async (request, response) => {
       if (!isValid) {
         writeJson(response, 401, { error: "Invalid email/username or password" });
         return;
+      }
+
+      // Migration path: transparently upgrade legacy SHA-256 hashes to bcrypt.
+      if (isLegacyPasswordHash(user.passwordHash)) {
+        try {
+          await userRepo.updatePasswordHash(user.id, await hashPassword(body.password));
+        } catch (error) {
+          console.error("Failed to migrate password hash for user", user.id, error);
+        }
       }
 
       const { generateToken } = await import("./auth.js");
@@ -1205,15 +1231,33 @@ const server = createServer(async (request, response) => {
       }
     }
 
-    // Sort by most recent and mark as read by updating applications
+    // Sort by most recent. READ-ONLY: marking as read happens only via
+    // POST /api/notifications/:id/read or POST /api/notifications/read-all,
+    // called explicitly when the user opens the notification panel.
     notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    
-    // Mark all as read
-    for (const notif of notifications) {
-      await applicationRepo.update(notif.id, { isRead: true });
-    }
 
     writeJson(response, 200, { notifications, unreadCount: notifications.length });
+    return;
+  }
+
+  // Explicit mark-as-read for the recruiter derived feed (paired with the
+  // read-only GET above — the frontend calls this when the panel is opened).
+  if (request.url === "/api/recruiter/notifications/read-all" && request.method === "POST") {
+    const user = await getUserFromRequest(request);
+    if (!user || user.role !== "recruiter") {
+      writeJson(response, 403, { error: "Only recruiters can access this" });
+      return;
+    }
+    const jobs = await jobRepo.findByRecruiter(user.id);
+    for (const job of jobs) {
+      const applications = await applicationRepo.findByJob(job.id);
+      for (const app of applications) {
+        if (!app.isRead) {
+          await applicationRepo.update(app.id, { isRead: true });
+        }
+      }
+    }
+    writeJson(response, 200, { success: true });
     return;
   }
 
@@ -1261,8 +1305,22 @@ const server = createServer(async (request, response) => {
       const proofSubmission = await proofSubmissionRepo.findByJobAndApplicant(body.jobId, user.id);
       const proofStatus = deriveProofApplicantStatus(proofSubmission, job.proofHire.enabled && job.proofHire.mode === "required");
 
-      if (job.proofHire.enabled && job.proofHire.mode === "required" && proofStatus !== "passed") {
-        writeJson(response, 400, { error: "ProofHire challenge must be passed before applying to this job" });
+      // Guided apply policy (Appendix A.4): profile + resume gate the application.
+      // A required ProofHire challenge NO LONGER blocks applying — it is completed
+      // afterwards and still weights screening. proofStatus is recorded as-is.
+      const completeness = checkProfileCompleteness(body.profile);
+      if (!completeness.complete) {
+        writeJson(response, 400, {
+          error: "Profile is incomplete. Complete your profile before applying.",
+          missing: completeness.missing,
+        });
+        return;
+      }
+      if (body.profile.resumeUploaded !== true) {
+        writeJson(response, 400, {
+          error: "Resume upload is required. Upload and parse your resume before applying.",
+          missing: ["Resume upload"],
+        });
         return;
       }
 
@@ -1677,7 +1735,7 @@ const server = createServer(async (request, response) => {
       }
       await profileRepo.save(user.id, body.profile);
       console.log("Profile saved to repo for user:", user.id);
-      writeJson(response, 201, { message: "Profile saved successfully", profile: body.profile });
+      writeJson(response, 201, { message: "Profile saved successfully", profile: body.profile, completeness: checkProfileCompleteness(body.profile) });
       return;
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -1706,7 +1764,7 @@ const server = createServer(async (request, response) => {
         return;
       }
       await profileRepo.save(user.id, body.profile);
-      writeJson(response, 200, { message: "Profile updated successfully", profile: body.profile });
+      writeJson(response, 200, { message: "Profile updated successfully", profile: body.profile, completeness: checkProfileCompleteness(body.profile) });
       return;
     } catch (error) {
       writeJson(response, 400, {
@@ -1919,6 +1977,7 @@ const server = createServer(async (request, response) => {
 });
 
 async function startServer() {
+  validateRuntimeConfig();
   console.log("Initializing repositories...");
   screeningRepo = await createRepository();
   userRepo = await createUserRepository();
@@ -1937,7 +1996,70 @@ async function startServer() {
   });
 }
 
-startServer().catch(console.error);
+startServer().catch((error) => {
+  console.error("Failed to start server:", error instanceof Error ? error.message : error);
+  process.exit(1);
+});
+
+/** Fail fast on missing/insecure config instead of failing confusingly later. */
+function validateRuntimeConfig(): void {
+  const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === "development";
+  if (!process.env.JWT_SECRET && !isDev) {
+    throw new Error("JWT_SECRET must be set in non-development environments (refusing insecure fallback)");
+  }
+  if (!process.env.MONGODB_URI && process.env.ALLOW_IN_MEMORY_DB !== "true") {
+    throw new Error(
+      "MONGODB_URI is unset — refusing to boot on ephemeral in-memory storage. " +
+      "Set MONGODB_URI or explicitly opt into ephemeral mode with ALLOW_IN_MEMORY_DB=true.",
+    );
+  }
+  if (!process.env.GEMINI_API_KEY) {
+    console.warn("[config] ⚠️ GEMINI_API_KEY unset — Gemini reasoning will use the offline fallback.");
+  }
+  if (!process.env.ALLOWED_ORIGINS) {
+    console.warn("[config] ⚠️ ALLOWED_ORIGINS unset — CORS defaults to local frontend origins only.");
+  }
+}
+
+// Minimal in-memory sliding-window rate limiter (per IP + route).
+// A dedicated middleware replaces this during the Express/Fastify migration.
+const rateLimitBuckets = new Map<string, number[]>();
+
+function checkRateLimit(key: string, limit: number, windowMs: number): boolean {
+  const now = Date.now();
+  const hits = (rateLimitBuckets.get(key) ?? []).filter((t) => now - t < windowMs);
+  if (hits.length >= limit) {
+    rateLimitBuckets.set(key, hits);
+    return true;
+  }
+  hits.push(now);
+  rateLimitBuckets.set(key, hits);
+  return false;
+}
+
+function isRateLimited(
+  request: import("node:http").IncomingMessage,
+  response: import("node:http").ServerResponse,
+): boolean {
+  // Note: bcrypt's work factor is the primary brute-force defense on auth
+  // routes; these limits stop casual credential stuffing while allowing
+  // legit bursts (e.g. the demo seed script logs in ~18 accounts at once).
+  const policies: Array<{ url: string; method: string; limit: number; windowMs: number }> = [
+    { url: "/api/auth/login", method: "POST", limit: 30, windowMs: 60_000 },
+    { url: "/api/auth/register", method: "POST", limit: 30, windowMs: 60_000 },
+    { url: "/api/ingest/resume", method: "POST", limit: 20, windowMs: 60_000 },
+  ];
+  for (const policy of policies) {
+    if (request.url === policy.url && request.method === policy.method) {
+      const ip = request.socket.remoteAddress ?? "unknown";
+      if (checkRateLimit(`${policy.method}:${policy.url}:${ip}`, policy.limit, policy.windowMs)) {
+        writeJson(response, 429, { error: "Too many requests. Please slow down and try again." });
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 async function createRunRecord(request: ScreeningRequest): Promise<ScreeningRunRecord> {
   const normalizedRequest: ScreeningRequest = {

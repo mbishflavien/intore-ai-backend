@@ -4,6 +4,22 @@ All notable changes to IntoreAI (backend **and** frontend) are documented here.
 
 ## [Unreleased]
 
+### Backend — Guided apply flow + security trio
+
+#### Guided apply enforcement (Appendix A.4)
+- **`packages/shared/src/index.ts`** — `TalentProfile` gains `resumeUploaded/resumeFileName/resumeUploadedAt`; new `checkProfileCompleteness()` single source of truth (name, headline, location, ≥3 skills, ≥1 experience, ≥1 education).
+- **`api/src/server.ts` `POST /api/applications`** — rejects incomplete profiles (400 + `missing` list) and missing resume upload (400); required-ProofHire no longer blocks applying (recorded as-is, completed post-apply).
+- **`POST/PUT /api/profiles`** — responses now include `completeness`; starter profile ships `resumeUploaded: false`.
+- **`api/src/resume.ts`** — cross-platform venv resolution (`venv/Scripts/python.exe` on Windows); accepts `application/octet-stream` PDFs.
+
+#### Security trio
+- **`api/src/auth.ts`** — bcryptjs (cost 10) replaces SHA-256; legacy `salt:hex` hashes still verify with transparent re-hash-on-login migration (`userRepo.updatePasswordHash`, in-memory + Mongo); JWT via `jose` HS256 (clean cut — old hand-rolled tokens no longer verify); refuses insecure fallback secret outside development.
+- **`api/src/server.ts`** — boot-time `validateRuntimeConfig()` (JWT_SECRET, MONGODB_URI/ALLOW_IN_MEMORY_DB, GEMINI_API_KEY warning, ALLOWED_ORIGINS warning; `process.exit(1)` on failure); CORS `*` replaced with `ALLOWED_ORIGINS` allow-list (defaults to localhost:3000); `GET /api/recruiter/notifications` is now read-only + new explicit `POST /api/recruiter/notifications/read-all`; sliding-window rate limiting (auth 30/min, ingest/resume 20/min).
+- **`api/.env.example`** — documents `ALLOW_IN_MEMORY_DB`, required `JWT_SECRET`, `ALLOWED_ORIGINS`.
+
+#### Verified live
+- jose token round-trip, forged token → 401; bcrypt round-trip + legacy-hash verify; incomplete profile → 400 + missing list; resumeless → 400; full apply on required-ProofHire job → 201 `submitted/not_started`; evil-origin CORS blocked, localhost allowed; seed burst correctly 429'd; recruiter feed unread stable across polls; server refuses boot without `MONGODB_URI`/`ALLOW_IN_MEMORY_DB`.
+
 ### Frontend — Week 1 High priorities (Sam + Friend, built in `intore-ai-frontend`)
 - Friend #2: new `components/ui/` library (Button, Card, Modal, Badge, Table, Toast, Avatar, Dropdown, Tabs, Skeleton).
 - Friend #1: inline `style={{}}` 92 → 3 (only data-driven progress widths remain); rewrote landing + both ProofHire applicant pages in glass-morphism.

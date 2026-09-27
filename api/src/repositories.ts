@@ -42,6 +42,7 @@ export interface UserRepository {
   findByEmailOrUsername(emailOrUsername: string): Promise<User | null>;
   findById(id: string): Promise<User | null>;
   listByRole(role: UserRole): Promise<User[]>;
+  updatePasswordHash(id: string, passwordHash: string): Promise<void>;
   delete(id: string): Promise<void>;
 }
 
@@ -173,6 +174,14 @@ class InMemoryUserRepository implements UserRepository {
 
   async listByRole(role: UserRole): Promise<User[]> {
     return [...this.users.values()].filter((user) => user.role === role);
+  }
+
+  async updatePasswordHash(id: string, passwordHash: string): Promise<void> {
+    const existing = this.users.get(id);
+    if (!existing) {
+      return;
+    }
+    this.users.set(id, { ...existing, passwordHash, updatedAt: new Date().toISOString() });
   }
 
   async delete(id: string): Promise<void> {
@@ -466,6 +475,12 @@ class MongoUserRepository implements UserRepository {
 
   async listByRole(role: UserRole): Promise<User[]> {
     return this.db().collection<User>("users").find({ role }).toArray();
+  }
+
+  async updatePasswordHash(id: string, passwordHash: string): Promise<void> {
+    await this.db()
+      .collection<User>("users")
+      .updateOne({ id }, { $set: { passwordHash, updatedAt: new Date().toISOString() } });
   }
 
   async delete(id: string): Promise<void> {

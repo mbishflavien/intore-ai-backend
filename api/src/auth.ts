@@ -1,9 +1,32 @@
 import type { IncomingMessage } from "node:http";
 
+import bcrypt from "bcryptjs";
+import { SignJWT, jwtVerify } from "jose";
+
 import type { PublicUser, User, UserRole } from "../../packages/shared/src/index.js";
 
-const JWT_SECRET = process.env.JWT_SECRET ?? "umurava-hr-ai-dev-secret-change-in-production";
+const DEV_JWT_FALLBACK = "umurava-hr-ai-dev-secret-change-in-production";
 const JWT_EXPIRES_IN = "7d";
+const BCRYPT_ROUNDS = 10;
+
+function getJwtSecret(): Uint8Array {
+  const configured = process.env.JWT_SECRET;
+  if (configured && configured.length > 0) {
+    return new TextEncoder().encode(configured);
+  }
+  // Secure default: refuse to boot on the fallback secret outside development.
+  // validateRuntimeConfig() in server.ts enforces this at startup; this is the
+  // second line of defense if auth.ts is ever used standalone.
+  if (process.env.NODE_ENV === "development" || !process.env.NODE_ENV) {
+    console.warn("[auth] ⚠️ JWT_SECRET unset — using insecure dev fallback. Set JWT_SECRET for any shared deploy.");
+    return new TextEncoder().encode(DEV_JWT_FALLBACK);
+  }
+  throw new Error("JWT_SECRET must be set (refusing insecure fallback outside development)");
+}
+
+export function isDevJwtFallback(): boolean {
+  return !process.env.JWT_SECRET;
+}
 
 interface JwtPayload {
   sub: string;
@@ -12,83 +35,37 @@ interface JwtPayload {
   lastName: string;
   email: string;
   role: UserRole;
-  iat: number;
-  exp: number;
-}
-
-function base64UrlEncode(data: string): string {
-  return Buffer.from(data).toString("base64url");
-}
-
-function base64UrlDecode(data: string): string {
-  return Buffer.from(data, "base64url").toString("utf8");
-}
-
-async function sha256(data: string): Promise<ArrayBuffer> {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(JWT_SECRET),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
-  return signature;
-}
-
-async function createSignature(data: string): Promise<string> {
-  const sig = await sha256(data);
-  return base64UrlEncode(String.fromCharCode(...new Uint8Array(sig)));
 }
 
 export async function generateToken(user: User): Promise<string> {
-  const header = { alg: "HS256", typ: "JWT" };
-  const payload: Omit<JwtPayload, "iat" | "exp"> = {
-    sub: user.id,
+  return new SignJWT({
     username: user.username,
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
     role: user.role,
-  };
-
-  const now = Math.floor(Date.now() / 1000);
-  const exp = now + 7 * 24 * 60 * 60;
-
-  const fullPayload: JwtPayload = { ...payload, iat: now, exp };
-
-  const encodedHeader = base64UrlEncode(JSON.stringify(header));
-  const encodedPayload = base64UrlEncode(JSON.stringify(fullPayload));
-  const signatureInput = `${encodedHeader}.${encodedPayload}`;
-  const signature = await createSignature(signatureInput);
-
-  return `${signatureInput}.${signature}`;
+  })
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject(user.id)
+    .setIssuedAt()
+    .setExpirationTime(JWT_EXPIRES_IN)
+    .sign(getJwtSecret());
 }
 
 export async function verifyToken(token: string): Promise<JwtPayload | null> {
   try {
-    const parts = token.split(".");
-    if (parts.length !== 3) {
+    const { payload } = await jwtVerify(token, getJwtSecret(), { algorithms: ["HS256"] });
+    if (typeof payload.sub !== "string") {
       return null;
     }
-
-    const [encodedHeader, encodedPayload, signature] = parts;
-    const signatureInput = `${encodedHeader}.${encodedPayload}`;
-    const expectedSignature = await createSignature(signatureInput);
-
-    if (signature !== expectedSignature) {
-      return null;
-    }
-
-    const payload = JSON.parse(base64UrlDecode(encodedPayload)) as JwtPayload;
-    const now = Math.floor(Date.now() / 1000);
-
-    if (payload.exp < now) {
-      return null;
-    }
-
-    return payload;
+    return {
+      sub: payload.sub,
+      username: String(payload.username ?? ""),
+      firstName: String(payload.firstName ?? ""),
+      lastName: String(payload.lastName ?? ""),
+      email: String(payload.email ?? ""),
+      role: payload.role as UserRole,
+    };
   } catch {
     return null;
   }
@@ -122,31 +99,35 @@ export async function getUserFromRequest(
     lastName: payload.lastName,
     email: payload.email,
     role: payload.role,
-    createdAt: new Date(payload.iat * 1000).toISOString(),
+    createdAt: new Date().toISOString(),
   };
 }
 
-export async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const salt = crypto.randomUUID();
-  const data = encoder.encode(password + salt);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-  return `${salt}:${hashHex}`;
+/** Legacy format from the pre-bcrypt era: `<salt>:<sha256hex>`. */
+export function isLegacyPasswordHash(storedHash: string): boolean {
+  return !storedHash.startsWith("$2");
 }
 
-export async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, BCRYPT_ROUNDS);
+}
+
+async function verifyLegacyPassword(password: string, storedHash: string): Promise<boolean> {
   const [salt, hash] = storedHash.split(":");
   if (!salt || !hash) {
     return false;
   }
-
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password + salt);
+  const data = new TextEncoder().encode(password + salt);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+  const hashHex = Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+  return hashHex === hash;
+}
 
-  return hash === hashHex;
+export async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+  if (isLegacyPasswordHash(storedHash)) {
+    return verifyLegacyPassword(password, storedHash);
+  }
+  return bcrypt.compare(password, storedHash);
 }
