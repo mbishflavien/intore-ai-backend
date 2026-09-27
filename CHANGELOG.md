@@ -4,6 +4,13 @@ All notable changes to IntoreAI (backend **and** frontend) are documented here.
 
 ## [Unreleased]
 
+### Frontend — Week 1 High priorities (Sam + Friend, built in `intore-ai-frontend`)
+- Friend #2: new `components/ui/` library (Button, Card, Modal, Badge, Table, Toast, Avatar, Dropdown, Tabs, Skeleton).
+- Friend #1: inline `style={{}}` 92 → 3 (only data-driven progress widths remain); rewrote landing + both ProofHire applicant pages in glass-morphism.
+- Sam #2: 5-stage application status tracker (Applied → Screened → Shortlisted → Interview → Decision) with stats, filters, skeletons.
+- Sam #1: new `/applicant/prep` Prep Room reusing training API (quiz drills + employer challenges), wired into sidebar.
+- Verified: `npm run typecheck` + `npm run build` pass (23 routes).
+
 ### Backend — `intore-ai-backend`
 
 #### New: Applicant self-training (Upskill)
