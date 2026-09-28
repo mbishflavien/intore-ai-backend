@@ -4,6 +4,22 @@ All notable changes to IntoreAI (backend **and** frontend) are documented here.
 
 ## [Unreleased]
 
+### Backend — Week 1 Mugisha: indexes, CI/CD, Docker
+
+#### Mugisha #1 — MongoDB indexes
+- **`api/src/repositories.ts`** — new `ensureMongoIndexes()` (idempotent `createIndex`): jobs `{status}`, `{createdAt:-1}`; applications `{jobId,applicantId}`, `{status}`; users `{email}` unique; plus supporting `{id}` uniques, owner/lookup keys (jobs recruiterId, applications jobId/applicantId, username unique, screening_runs id+createdAt, recruiter_reviews screeningRunId, profiles applicantId, proof_challenges recruiterId, proof_submissions jobId+applicantId, interviews/notifications/activity owner keys).
+- **`api/src/repos.ts`** — `initRepos()` calls it when `MONGODB_URI` is set (skipped in ephemeral in-memory mode); per-index failures warn, never crash boot.
+- Note: task listed screenings `(jobId, score)` — screening_runs store opaque run records (no top-level jobId/score), so runs are indexed by `{id}` + `{createdAt}` (the actual query paths) instead.
+
+#### Mugisha #2 — CI/CD pipeline
+- **`.github/workflows/ci.yml`** — on PR/push to main+dev: `npm ci`, workspace typecheck, workspace build, boot smoke test in in-memory mode (`/health` 200, empty-register 400 Zod check, unknown-route non-2xx).
+- **`.github/workflows/deploy.yml`** — on push to main: full verify, then `DEPLOY_HOOK_URL` trigger (skips with notice when secret unset; set it to enable auto-deploy).
+
+#### Mugisha #3 — Docker setup
+- **`api/Dockerfile`** (multi-stage node:20-alpine, compiled `node dist/api/src/server.js`), **`parser-llm/Dockerfile`** (python:3.11-slim, model mounted not baked), **`Dockerfile`** in `intore-ai-frontend` (+ new `npm start` script) for web.
+- **`docker-compose.yml`** — mongo (healthchecked, persisted volume) + api (JWT_SECRET required, secure defaults) + web (build-arg API URL) + parser (opt-in `parser` profile, model volume).
+- Verified: `docker compose config` valid; API boots healthy in in-memory mode with indexes skipped. Image builds need a running Docker daemon (not available on this machine — first `docker compose build` will confirm).
+
 ### Frontend — Week 2 Friend (built in `intore-ai-frontend`)
 - Friend #3: skeletons rolled out everywhere (`DashboardSkeleton` + `TableSkeleton` new; all full-page spinners replaced; button spinners kept).
 - Friend #4: persisted dark mode (ThemeProvider + no-FOUC boot, header toggles, Tailwind class-based dark variant + dark glass/text layer).

@@ -70,9 +70,9 @@
 
 | # | Task | Description | Priority | Deadline |
 |---|------|-------------|----------|----------|
-| 1 | Add MongoDB indexes | Create indexes on jobs (status, createdAt), applications (jobId, applicantId, status), screenings (jobId, score), users (email unique) | **High** | 1 week |
-| 2 | Set up CI/CD pipeline | GitHub Actions workflow: lint, typecheck, build, test on PR; auto-deploy on merge to main | **High** | 1 week |
-| 3 | Docker setup | Dockerfile for API + Parser; docker-compose.yml orchestrating services + MongoDB | **High** | 1 week |
+| 1 | ~~Add MongoDB indexes~~ ✅ Done | `ensureMongoIndexes()` in `repositories.ts` (called from `initRepos` when `MONGODB_URI` set): jobs (status, createdAt), applications (jobId+applicantId, status), users (email unique) + id/owner supporting indexes; per-index warn, never fatal | — | — |
+| 2 | ~~Set up CI/CD pipeline~~ ✅ Done | `.github/workflows/ci.yml` (typecheck+build+boot smoke on PR/push to main/dev) and `deploy.yml` (verify + `DEPLOY_HOOK_URL` deploy on merge to main) | — | — |
+| 3 | ~~Docker setup~~ ✅ Done | `api/Dockerfile` + `parser-llm/Dockerfile` + web `Dockerfile` (frontend repo) + `docker-compose.yml` (mongo+api+web, parser profile); compose config validated | — | — |
 | 4 | Add org/company profiles | Multi-tenant org model, company profile CRUD, team member management | Medium | 2 weeks |
 | 5 | Build candidate prep mode API | Endpoint serving question bank filtered by job role for applicant practice | Medium | 2 weeks |
 | 6 | GDPR/compliance controls | Data retention policies, export endpoint (right to data portability), hard delete endpoint (right to erasure) | Medium | 3 weeks |

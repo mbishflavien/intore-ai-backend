@@ -766,6 +766,57 @@ function dbName(): string {
   return process.env.MONGODB_DB ?? "umurava_ai";
 }
 
+/**
+ * Week 1 (Mugisha #1) — MongoDB indexes for the hot query paths.
+ * Idempotent (createIndex is a no-op when the index exists).
+ * Called once at boot when MONGODB_URI is set; failures warn but never
+ * crash the server (the API is correct without indexes, just slower).
+ */
+export async function ensureMongoIndexes(): Promise<void> {
+  const client = new MongoClient(process.env.MONGODB_URI!);
+  await client.connect();
+  try {
+    const db = client.db(dbName());
+    // [collection, spec, options]
+    const specs: Array<[string, Record<string, 1 | -1>, { unique?: boolean; name?: string }]> = [
+      // Task-required:
+      ["jobs", { status: 1 }, {}],
+      ["jobs", { createdAt: -1 }, {}],
+      ["applications", { jobId: 1, applicantId: 1 }, {}],
+      ["applications", { status: 1 }, {}],
+      ["users", { email: 1 }, { unique: true }],
+      // Supporting hot paths (id lookups, owner feeds, joins):
+      ["jobs", { id: 1 }, { unique: true, name: "jobs_id_unique" }],
+      ["jobs", { recruiterId: 1 }, {}],
+      ["applications", { id: 1 }, { unique: true, name: "applications_id_unique" }],
+      ["applications", { jobId: 1 }, {}],
+      ["applications", { applicantId: 1 }, {}],
+      ["users", { id: 1 }, { unique: true, name: "users_id_unique" }],
+      ["users", { username: 1 }, { unique: true }],
+      ["screening_runs", { id: 1 }, { unique: true, name: "screening_runs_id_unique" }],
+      ["screening_runs", { createdAt: -1 }, {}],
+      ["recruiter_reviews", { screeningRunId: 1 }, {}],
+      ["profiles", { applicantId: 1 }, { unique: true }],
+      ["proof_challenges", { recruiterId: 1 }, {}],
+      ["proof_submissions", { jobId: 1, applicantId: 1 }, {}],
+      ["interviews", { recruiterId: 1 }, {}],
+      ["notifications", { userId: 1 }, {}],
+      ["activity_logs", { recruiterId: 1 }, {}],
+    ];
+    for (const [collection, spec, options] of specs) {
+      try {
+        await db.collection(collection).createIndex(spec, options);
+      } catch (error) {
+        // E.g. unique index over pre-existing duplicate data — warn, keep booting.
+        console.warn(`[mongo] index skipped on ${collection} ${JSON.stringify(spec)}:`, error instanceof Error ? error.message : error);
+      }
+    }
+    console.log("[mongo] indexes ensured.");
+  } finally {
+    await client.close();
+  }
+}
+
 export async function createRepository(): Promise<ScreeningRepository> {
   if (!process.env.MONGODB_URI) {
     return new InMemoryScreeningRepository();

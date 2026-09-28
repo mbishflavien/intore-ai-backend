@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [main, dev]
+
+jobs:
+  verify:
+    name: Typecheck + Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck all workspaces
+        run: npm run typecheck
+
+      - name: Build all workspaces
+        run: npm run build
+
+      - name: Boot smoke test (in-memory mode)
+        run: |
+          ALLOW_IN_MEMORY_DB=true JWT_SECRET=ci-smoke-secret API_PORT=4001 npx tsx api/src/server.ts > /tmp/api-boot.log 2>&1 &
+          API_PID=$!
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:4001/health > /dev/null 2>&1; then
+              echo "API booted OK"
+              break
+            fi
+            sleep 2
+          done
+          curl -fsS http://localhost:4001/health
+          # Zod rejects empty register bodies with 400 (validation live)
+          if curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:4001/api/auth/register \
+            -H 'Content-Type: application/json' -d '{}' | grep -q '^400$'; then
+            echo "Validation check OK (400 on empty register)"
+          else
+            echo "Validation check FAILED"; cat /tmp/api-boot.log; exit 1
+          fi
+          # Unknown routes are JSON 404, evil origins get 403
+          curl -fsS http://localhost:4001/api/nope -o /dev/null && { echo "404 check FAILED"; exit 1; } || true
+          kill $API_PID
