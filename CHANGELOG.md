@@ -4,6 +4,64 @@ All notable changes to IntoreAI (backend **and** frontend) are documented here.
 
 ## [Unreleased]
 
+### Frontend — Week 2 Friend (built in `intore-ai-frontend`)
+- Friend #3: skeletons rolled out everywhere (`DashboardSkeleton` + `TableSkeleton` new; all full-page spinners replaced; button spinners kept).
+- Friend #4: persisted dark mode (ThemeProvider + no-FOUC boot, header toggles, Tailwind class-based dark variant + dark glass/text layer).
+- Friend #5: responsive collapsible sidebar (`AppSidebar` + `useSidebar` shared; icon pillar ↔ labeled rail on desktop, slide-over drawer + hamburger on mobile, responsive content padding).
+- Verified: `npm run typecheck` + `npm run build` pass.
+
+### Frontend — Week 2 Sam (built in `intore-ai-frontend`)
+- Sam #3: ProofHire timer (persisted deadline, auto-submit at zero) + time/assessment progress bars + 30s autosave with localStorage backup + mobile sticky action bar.
+- Sam #4: Saved jobs (`lib/saved-jobs.ts` localStorage store, All/Saved tabs, bookmark toggles, extended search, skeletons).
+- Sam #5: Notifications center (`/applicant/notifications` — filters, per-item + mark-all read via `POST /:id/read` + `/read-all`, optimistic rollback, deep links, sidebar entry); `lib/api.ts` gains `notifications.markOne`.
+- Verified: `npm run typecheck` + `npm run build` pass (24 routes incl. new notifications page).
+
+### Backend — Week 2 Flavien: Express + Zod + rate-limit + RBAC (secure)
+
+#### Express migration (Task #4)
+- **`api/src/server.ts`** — now a thin bootstrap (`startServer()` from `app.ts`); raw `node:http` dispatch + `writeJson/readJsonBody` removed from the request path.
+- **`api/src/app.ts`** (new) — Express 4 app factory: `helmet` (HSTS/nosniff/frameguard, CSP off for JSON API), `cors` allow-list (`ALLOWED_ORIGINS`, evil origins → 403), `express.json({limit:"15mb"})`, `trust proxy: 1`, global 429/404 JSON + invalid-JSON 400 handler.
+- **`api/src/config.ts` / `repos.ts` / `helpers.ts` / `http.ts`** (new) — runtime config gate, repository singletons, shared screening/job/proof helpers, `param()` route-param coercion.
+- **`api/src/routes/*`** (new) — grouped routers preserving every legacy path/status: `auth`, `jobs` (+publish/close/applications/screen), `applications`, `proofhire`, `interviews`, `notifications`, `profiles`, `screening` (/screen, /screenings, /reviews, /ingest/*), `training` + `mentor` + `recruiter` + `system`/`misc` (/stats, /activity, /users/delete).
+- Deps: `express@4`, `helmet`, `cors`, `express-rate-limit`, `zod` (+ `@types/express`, `@types/cors`).
+
+#### Zod validation (Task #5)
+- **`api/src/schemas/index.ts`** (new) — strict schemas for all major routes: register/login, screening request, reviews, CSV/resume ingest (15MB cap), challenge create, ProofHire config/submission, job create, application create/status, interview create, profile save, training progress/practice-evaluate, mentor chat.
+- **`api/src/middleware/validate.ts`** (new) — `validateBody/validateQuery` → 400 `{error, details[]}`; replaces manual `if (!body.title)` checks.
+
+#### Rate limiting (Task #6)
+- **`api/src/middleware/rateLimit.ts`** (new) — `express-rate-limit` policies preserving pre-Express budgets: login 30/min, register 30/min, ingest 20/min, general API 300/min; `draft-8` headers only, JSON 429 body, IPv6-safe key via `ipKeyGenerator(req.ip)+userId`.
+
+#### RBAC + auth-gap fixes (Task #8)
+- **`api/src/middleware/auth.ts` / `rbac.ts`** (new) — `attachUser` (jose HS256, never throws) + `requireAuth` (401) + `requireRole("recruiter"|"applicant")` (403, no role leak).
+- Every protected route now declares its role; ownership still enforced per-record (job owner via `ownsJob`, notification `userId` check, challenge `recruiterId` check, self-delete username match).
+- **Fixed:** `GET /api/proofhire/jobs/:id/questions` was unauthenticated and leaked per-submission rows — now recruiter-owner only, returns aggregate `{questions: [], submissionCount}`.
+- **Fixed:** `GET /api/proofhire/challenges/:id` direct reads now recruiter-scoped (applicants use the job-scoped brief endpoint).
+- Notification ordering kept exact-first: `POST /read-all` before `POST /:id/read` (no `read-all`-as-id misroute).
+
+#### Verified live (Express, in-memory DB)
+- `npm run typecheck` + `npm run build` pass (api, engine, shared).
+- `GET /health` → 200 `{ok:true}`; evil-origin `Origin: https://evil.example.com` → 403; unknown route → 404 JSON.
+- `POST /api/auth/register {}` → 400 Zod details; applicant JWT → `POST /api/jobs` 403; no token → `GET /api/notifications` 401.
+- Applicant `GET /api/notifications` 200, `POST /read-all` `{success:true}`, `POST /notifications/nope/read` 404 (no misroute).
+- Recruiter creates job 201; applicant → `GET /proofhire/jobs/:id/questions` 403; recruiter → 200 `{questions: [], submissionCount: 0}`.
+
+### Backend — Guided apply flow + security trio
+
+#### Guided apply enforcement (Appendix A.4)
+- **`packages/shared/src/index.ts`** — `TalentProfile` gains `resumeUploaded/resumeFileName/resumeUploadedAt`; new `checkProfileCompleteness()` single source of truth (name, headline, location, ≥3 skills, ≥1 experience, ≥1 education).
+- **`api/src/server.ts` `POST /api/applications`** — rejects incomplete profiles (400 + `missing` list) and missing resume upload (400); required-ProofHire no longer blocks applying (recorded as-is, completed post-apply).
+- **`POST/PUT /api/profiles`** — responses now include `completeness`; starter profile ships `resumeUploaded: false`.
+- **`api/src/resume.ts`** — cross-platform venv resolution (`venv/Scripts/python.exe` on Windows); accepts `application/octet-stream` PDFs.
+
+#### Security trio
+- **`api/src/auth.ts`** — bcryptjs (cost 10) replaces SHA-256; legacy `salt:hex` hashes still verify with transparent re-hash-on-login migration (`userRepo.updatePasswordHash`, in-memory + Mongo); JWT via `jose` HS256 (clean cut — old hand-rolled tokens no longer verify); refuses insecure fallback secret outside development.
+- **`api/src/server.ts`** — boot-time `validateRuntimeConfig()` (JWT_SECRET, MONGODB_URI/ALLOW_IN_MEMORY_DB, GEMINI_API_KEY warning, ALLOWED_ORIGINS warning; `process.exit(1)` on failure); CORS `*` replaced with `ALLOWED_ORIGINS` allow-list (defaults to localhost:3000); `GET /api/recruiter/notifications` is now read-only + new explicit `POST /api/recruiter/notifications/read-all`; sliding-window rate limiting (auth 30/min, ingest/resume 20/min).
+- **`api/.env.example`** — documents `ALLOW_IN_MEMORY_DB`, required `JWT_SECRET`, `ALLOWED_ORIGINS`.
+
+#### Verified live
+- jose token round-trip, forged token → 401; bcrypt round-trip + legacy-hash verify; incomplete profile → 400 + missing list; resumeless → 400; full apply on required-ProofHire job → 201 `submitted/not_started`; evil-origin CORS blocked, localhost allowed; seed burst correctly 429'd; recruiter feed unread stable across polls; server refuses boot without `MONGODB_URI`/`ALLOW_IN_MEMORY_DB`.
+
 ### Frontend — Week 1 High priorities (Sam + Friend, built in `intore-ai-frontend`)
 - Friend #2: new `components/ui/` library (Button, Card, Modal, Badge, Table, Toast, Avatar, Dropdown, Tabs, Skeleton).
 - Friend #1: inline `style={{}}` 92 → 3 (only data-driven progress widths remain); rewrote landing + both ProofHire applicant pages in glass-morphism.

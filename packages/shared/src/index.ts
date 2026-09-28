@@ -86,6 +86,9 @@ export interface TalentProfile {
   id?: string;
   phone?: string;
   ipAddress?: string;
+  resumeUploaded?: boolean;
+  resumeFileName?: string;
+  resumeUploadedAt?: string;
 }
 
 export interface ProofChallengeTestCase {
@@ -405,6 +408,31 @@ export interface CreateProofSubmissionInput {
 
 export function isTalentProfile(input: ApplicantData): input is TalentProfile {
   return "firstName" in input && "headline" in input && Array.isArray(input.skills);
+}
+
+export interface ProfileCompleteness {
+  complete: boolean;
+  missing: string[];
+}
+
+/**
+ * Single source of truth for "is this profile ready to apply with?".
+ * Mirrored client-side in intore-ai-frontend/lib/profile.ts — keep labels in sync.
+ */
+export function checkProfileCompleteness(profile: Partial<TalentProfile> | null | undefined): ProfileCompleteness {
+  const missing: string[] = [];
+  if (!profile) return { complete: false, missing: ["Profile not found"] };
+  if (!profile.firstName?.trim()) missing.push("First name");
+  if (!profile.lastName?.trim()) missing.push("Last name");
+  if (!profile.headline?.trim()) missing.push("Professional headline");
+  if (!profile.location?.trim()) missing.push("Location");
+  if (!Array.isArray(profile.skills) || profile.skills.length < 3)
+    missing.push("At least 3 skills");
+  if (!Array.isArray(profile.experience) || profile.experience.length < 1)
+    missing.push("At least 1 work experience entry");
+  if (!Array.isArray(profile.education) || profile.education.length < 1)
+    missing.push("At least 1 education entry");
+  return { complete: missing.length === 0, missing };
 }
 
 export function isApplicantInput(input: ApplicantData): input is ApplicantInput {

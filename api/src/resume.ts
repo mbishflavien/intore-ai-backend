@@ -8,7 +8,8 @@ export async function parseResumeUpload(input: {
   const buffer = Buffer.from(input.base64, "base64");
   let resumeText: string;
 
-  if (input.mimeType === "application/pdf") {
+  if (input.mimeType === "application/pdf" || input.mimeType === "application/octet-stream") {
+    // Some browsers/OS report PDFs as octet-stream — attempt PDF parsing.
     const parsed = await pdf(buffer);
     resumeText = parsed.text.trim();
   } else if (input.mimeType === "text/plain") {
@@ -49,7 +50,20 @@ async function parseWithLocalParser(
     throw new Error("Could not locate parser-llm directory");
   }
 
-  const pythonBin = path.resolve(parserPath, "venv/bin/python");
+  // Cross-platform venv resolution: Windows uses venv/Scripts/python.exe,
+  // POSIX uses venv/bin/python. Prefer the platform-native candidate.
+  const venvCandidates =
+    process.platform === "win32"
+      ? ["venv/Scripts/python.exe", "venv/Scripts/python", "venv/bin/python"]
+      : ["venv/bin/python", "venv/Scripts/python.exe"];
+  const pythonBin =
+    venvCandidates
+      .map((rel) => path.resolve(parserPath, rel))
+      .find((abs) => fs.existsSync(abs)) ?? path.resolve(parserPath, venvCandidates[0]);
+
+  if (!fs.existsSync(pythonBin)) {
+    throw new Error(`Python venv not found under ${parserPath} (tried ${venvCandidates.join(", ")})`);
+  }
 
   return new Promise((resolve, reject) => {
     const python = spawn(pythonBin, [
