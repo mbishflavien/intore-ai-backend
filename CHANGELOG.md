@@ -4,6 +4,48 @@ All notable changes to IntoreAI (backend **and** frontend) are documented here.
 
 ## [Unreleased]
 
+### Frontend — Week 2 Friend (built in `intore-ai-frontend`)
+- Friend #3: skeletons rolled out everywhere (`DashboardSkeleton` + `TableSkeleton` new; all full-page spinners replaced; button spinners kept).
+- Friend #4: persisted dark mode (ThemeProvider + no-FOUC boot, header toggles, Tailwind class-based dark variant + dark glass/text layer).
+- Friend #5: responsive collapsible sidebar (`AppSidebar` + `useSidebar` shared; icon pillar ↔ labeled rail on desktop, slide-over drawer + hamburger on mobile, responsive content padding).
+- Verified: `npm run typecheck` + `npm run build` pass.
+
+### Frontend — Week 2 Sam (built in `intore-ai-frontend`)
+- Sam #3: ProofHire timer (persisted deadline, auto-submit at zero) + time/assessment progress bars + 30s autosave with localStorage backup + mobile sticky action bar.
+- Sam #4: Saved jobs (`lib/saved-jobs.ts` localStorage store, All/Saved tabs, bookmark toggles, extended search, skeletons).
+- Sam #5: Notifications center (`/applicant/notifications` — filters, per-item + mark-all read via `POST /:id/read` + `/read-all`, optimistic rollback, deep links, sidebar entry); `lib/api.ts` gains `notifications.markOne`.
+- Verified: `npm run typecheck` + `npm run build` pass (24 routes incl. new notifications page).
+
+### Backend — Week 2 Flavien: Express + Zod + rate-limit + RBAC (secure)
+
+#### Express migration (Task #4)
+- **`api/src/server.ts`** — now a thin bootstrap (`startServer()` from `app.ts`); raw `node:http` dispatch + `writeJson/readJsonBody` removed from the request path.
+- **`api/src/app.ts`** (new) — Express 4 app factory: `helmet` (HSTS/nosniff/frameguard, CSP off for JSON API), `cors` allow-list (`ALLOWED_ORIGINS`, evil origins → 403), `express.json({limit:"15mb"})`, `trust proxy: 1`, global 429/404 JSON + invalid-JSON 400 handler.
+- **`api/src/config.ts` / `repos.ts` / `helpers.ts` / `http.ts`** (new) — runtime config gate, repository singletons, shared screening/job/proof helpers, `param()` route-param coercion.
+- **`api/src/routes/*`** (new) — grouped routers preserving every legacy path/status: `auth`, `jobs` (+publish/close/applications/screen), `applications`, `proofhire`, `interviews`, `notifications`, `profiles`, `screening` (/screen, /screenings, /reviews, /ingest/*), `training` + `mentor` + `recruiter` + `system`/`misc` (/stats, /activity, /users/delete).
+- Deps: `express@4`, `helmet`, `cors`, `express-rate-limit`, `zod` (+ `@types/express`, `@types/cors`).
+
+#### Zod validation (Task #5)
+- **`api/src/schemas/index.ts`** (new) — strict schemas for all major routes: register/login, screening request, reviews, CSV/resume ingest (15MB cap), challenge create, ProofHire config/submission, job create, application create/status, interview create, profile save, training progress/practice-evaluate, mentor chat.
+- **`api/src/middleware/validate.ts`** (new) — `validateBody/validateQuery` → 400 `{error, details[]}`; replaces manual `if (!body.title)` checks.
+
+#### Rate limiting (Task #6)
+- **`api/src/middleware/rateLimit.ts`** (new) — `express-rate-limit` policies preserving pre-Express budgets: login 30/min, register 30/min, ingest 20/min, general API 300/min; `draft-8` headers only, JSON 429 body, IPv6-safe key via `ipKeyGenerator(req.ip)+userId`.
+
+#### RBAC + auth-gap fixes (Task #8)
+- **`api/src/middleware/auth.ts` / `rbac.ts`** (new) — `attachUser` (jose HS256, never throws) + `requireAuth` (401) + `requireRole("recruiter"|"applicant")` (403, no role leak).
+- Every protected route now declares its role; ownership still enforced per-record (job owner via `ownsJob`, notification `userId` check, challenge `recruiterId` check, self-delete username match).
+- **Fixed:** `GET /api/proofhire/jobs/:id/questions` was unauthenticated and leaked per-submission rows — now recruiter-owner only, returns aggregate `{questions: [], submissionCount}`.
+- **Fixed:** `GET /api/proofhire/challenges/:id` direct reads now recruiter-scoped (applicants use the job-scoped brief endpoint).
+- Notification ordering kept exact-first: `POST /read-all` before `POST /:id/read` (no `read-all`-as-id misroute).
+
+#### Verified live (Express, in-memory DB)
+- `npm run typecheck` + `npm run build` pass (api, engine, shared).
+- `GET /health` → 200 `{ok:true}`; evil-origin `Origin: https://evil.example.com` → 403; unknown route → 404 JSON.
+- `POST /api/auth/register {}` → 400 Zod details; applicant JWT → `POST /api/jobs` 403; no token → `GET /api/notifications` 401.
+- Applicant `GET /api/notifications` 200, `POST /read-all` `{success:true}`, `POST /notifications/nope/read` 404 (no misroute).
+- Recruiter creates job 201; applicant → `GET /proofhire/jobs/:id/questions` 403; recruiter → 200 `{questions: [], submissionCount: 0}`.
+
 ### Backend — Guided apply flow + security trio
 
 #### Guided apply enforcement (Appendix A.4)

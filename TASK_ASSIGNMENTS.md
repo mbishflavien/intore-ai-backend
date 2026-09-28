@@ -44,11 +44,11 @@
 | 1 | ~~Fix notification route bug~~ ✅ Done | `/api/notifications/:id/read` now matches `parts.length === 4 && parts[3] === "read"`, loads the notification, and verifies ownership (403) — conflicts with `/api/notifications/read-all` resolved | — | — |
 | 2 | ~~Fix resume parser cross-platform path~~ ✅ Done | resume.ts now resolves `parser-llm` via `PARSER_DIR`, `cwd`, and relative paths — no hardcoded Linux path | — | — |
 | 3 | ~~Add `.env.example`~~ ✅ Done | `api/.env.example` documents all required vars: `GEMINI_API_KEY`, `GEMINI_MODEL`, `MONGODB_URI`, `MONGODB_DB`, `JWT_SECRET`, `API_PORT`, `PARSER_DIR`, `PARSER_SERVICE_URL`, `SCREENING_TOP_N`, `SCREENING_MIN_SCORE` | — | — |
-| 4 | Migrate to proper HTTP framework | Replace raw `node:http` with Express or Fastify for middleware support, route grouping, error handling | Medium | 2 weeks |
-| 5 | Add input validation middleware | Integrate Zod schemas for all API request bodies and query params | Medium | 2 weeks |
-| 6 | Add rate limiting | Implement request throttling (e.g., express-rate-limit or custom) to prevent abuse | Medium | 2 weeks |
+| 4 | ~~Migrate to proper HTTP framework~~ ✅ Done | Express 4 (`app.ts` + `routes/*`): helmet, CORS allow-list, 15mb JSON cap, 404/400 JSON errors; `server.ts` is a thin bootstrap | — | — |
+| 5 | ~~Add input validation middleware~~ ✅ Done | Zod (`schemas/index.ts` + `middleware/validate.ts`) on all major routes → 400 `{error, details[]}` | — | — |
+| 6 | ~~Add rate limiting~~ ✅ Done | `express-rate-limit` (`middleware/rateLimit.ts`): login/register 30/min, ingest 20/min, API 300/min; IPv6-safe keys, JSON 429 | — | — |
 | 7 | Build audit/decision log | New repository + API endpoints for immutable decision logging (who decided what, when, why) | Low | 3 weeks |
-| 8 | Add RBAC middleware | Route-level middleware enforcing recruiter vs applicant access on protected endpoints | Medium | 2 weeks |
+| 8 | ~~Add RBAC middleware~~ ✅ Done | `middleware/auth.ts` + `rbac.ts` (401/403) on all protected routes; fixed open `proofhire …/questions` + `challenges/:id` gaps | — | — |
 
 ---
 
