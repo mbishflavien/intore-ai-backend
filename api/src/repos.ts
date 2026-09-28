@@ -21,6 +21,7 @@ import {
   createProofSubmissionRepository,
   createRepository,
   createUserRepository,
+  ensureMongoIndexes,
 } from "./repositories.js";
 
 /** Shared repository singletons, initialized once at boot. */
@@ -50,6 +51,15 @@ export async function initRepos(): Promise<void> {
   repos.notification = await createNotificationRepository();
   repos.activityLog = await createActivityLogRepository();
   console.log("Repositories initialized.");
+  // Week 1 (Mugisha #1): ensure Mongo indexes when a real database is
+  // configured. Skipped for ephemeral in-memory mode. Never fatal.
+  if (process.env.MONGODB_URI) {
+    try {
+      await ensureMongoIndexes();
+    } catch (error) {
+      console.warn("[mongo] ensureMongoIndexes failed (continuing without optimized indexes):", error instanceof Error ? error.message : error);
+    }
+  }
 }
 
 function must<T>(value: T | undefined, name: string): T {

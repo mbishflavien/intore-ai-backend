@@ -1,0 +1,79 @@
+# IntoreAI local stack: MongoDB + API + resume parser + web.
+#
+# Usage:
+#   cp api/.env.example api/.env   # then set JWT_SECRET + ALLOW_IN_MEMORY_DB or MONGODB_URI
+#   docker compose up --build
+#
+# Services:
+#   web     → http://localhost:3000 (Next.js, talks to api:4000)
+#   api     → http://localhost:4000 (Express, uses mongo:27017)
+#   parser  → http://localhost:5000 (FastAPI Qwen service, optional profile)
+#   mongo   → localhost:27017 (persisted in the mongo_data volume)
+
+services:
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: production
+      API_PORT: 4000
+      MONGODB_URI: mongodb://mongo:27017
+      MONGODB_DB: ${MONGODB_DB:-umurava_ai}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in your shell or a .env file next to docker-compose.yml}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      PARSER_SERVICE_URL: http://parser:5000
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4000/health').then(r=>{if(!r.ok)process.exit(1)})"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ../intore-ai-frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:4000}
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
+  parser:
+    build:
+      context: .
+      dockerfile: parser-llm/Dockerfile
+    restart: unless-stopped
+    profiles: ["parser"]
+    ports:
+      - "5000:5000"
+    volumes:
+      # Mount the GGUF model dir (NOT baked into the image).
+      - ./parser-llm/models:/app/models:ro
+    environment:
+      MODEL_PATH: ${MODEL_PATH:-/app/models/qwen2.5-1.5b-instruct-q4_k_m.gguf}
+
+volumes:
+  mongo_data:
