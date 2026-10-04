@@ -1,12 +1,19 @@
 // Seeded demo data for IntoreAI — real recruiters, real jobs, mix of Kigali + remote.
 // Idempotent: logs in if the account exists, registers otherwise. Safe to re-run.
-// Usage: node scripts/seed-demo.mjs   (require backend running on :4000)
+// Usage: SEED_PASSWORD='<strong password>' node scripts/seed-demo.mjs   (backend running on :4000)
+// SEED_PASSWORD must pass the password policy (12+ chars, upper/lower/number/symbol, not
+// common or breached) to register new accounts; accounts that already exist log in with it.
 const BASE = process.env.API_URL || "http://localhost:4000/api";
-const PASSWORD = "demo1234";
+const PASSWORD = process.env.SEED_PASSWORD || "demo1234";
+// Signup requires a Turnstile token when the API has TURNSTILE_SECRET_KEY. Against Cloudflare's
+// always-pass test secret any non-empty value works; real keys can't be scripted, by design.
+const CAPTCHA_TOKEN = process.env.SEED_CAPTCHA_TOKEN;
 
+// The API authenticates with an HttpOnly session cookie; `token` here is that cookie,
+// captured from the login/register response and replayed on later requests.
 async function request(path, { method = "GET", body, token } = {}) {
   const headers = { "Content-Type": "application/json" };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  if (token) headers.Cookie = token;
   const res = await fetch(`${BASE}${path}`, {
     method,
     headers,
@@ -19,6 +26,8 @@ async function request(path, { method = "GET", body, token } = {}) {
     error.data = data;
     throw error;
   }
+  const session = res.headers.getSetCookie().find((c) => /intore_session=/.test(c));
+  if (session) data.token = session.split(";")[0];
   return data;
 }
 
@@ -41,6 +50,7 @@ async function getRecruiter(username, password, firstName, lastName, email, comp
         email,
         role: "recruiter",
         company,
+        captchaToken: CAPTCHA_TOKEN,
       },
     });
     const { token } = await request("/auth/login", {
@@ -381,7 +391,7 @@ async function seed() {
       await request("/auth/login", { method: "POST", body: { emailOrUsername: demo.username, password: PASSWORD } });
       summary.push(`demo account ${demo.username} already exists`);
     } catch {
-      const body = { ...demo, password: PASSWORD };
+      const body = { ...demo, password: PASSWORD, captchaToken: CAPTCHA_TOKEN };
       if (demo.company) body.company = demo.company;
       await request("/auth/register", { method: "POST", body });
       summary.push(`registered demo account ${demo.username}`);

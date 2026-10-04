@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
@@ -5,6 +6,8 @@ import type { ApplicantData, JobRequirementInput } from "../../packages/shared/s
 import { API_PORT, getAllowedOrigins, validateRuntimeConfig } from "./config.js";
 import { initRepos } from "./repos.js";
 import { attachUser } from "./middleware/auth.js";
+import { csrfOriginCheck } from "./middleware/csrf.js";
+import { initSecurityStore } from "./security/store.js";
 import { apiLimiter } from "./middleware/rateLimit.js";
 import { DEFAULT_PROOF_CHALLENGE_TEMPLATES } from "./repositories.js";
 import { createRunRecord } from "./helpers.js";
@@ -67,13 +70,18 @@ export function createApp() {
       if (getAllowedOrigins().includes(origin)) return cb(null, true);
       return cb(new Error("CORS: origin not allowed"));
     },
-    allowedHeaders: ["Content-Type", "Authorization"],
+    // Browsers reach the API same-origin through the app's /api proxy; CORS only matters
+    // for direct calls, which get credentials only from allow-listed origins.
+    credentials: true,
+    allowedHeaders: ["Content-Type"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     maxAge: 600,
   }));
   // JSON body with sane cap (resume base64 goes through this — 15MB ceiling
   // matches the Zod schema; rejects oversized payloads with 413).
   app.use(express.json({ limit: "15mb" }));
+  app.use(cookieParser());
+  app.use(csrfOriginCheck);
   app.use(attachUser);
   app.use(apiLimiter);
 
@@ -118,6 +126,7 @@ export function createApp() {
 export async function startServer(): Promise<void> {
   validateRuntimeConfig();
   await initRepos();
+  await initSecurityStore();
   const app = createApp();
   app.listen(API_PORT, () => {
     console.log(`Umurava AI API (Express) listening on http://localhost:${API_PORT}`);

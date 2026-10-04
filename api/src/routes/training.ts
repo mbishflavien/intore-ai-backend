@@ -176,7 +176,7 @@ miscRouter.get("/stats", requireAuth, requireRecruiter, async (req, res) => {
     const allJobs = await db.job.findPublished();
     let totalScore = 0, scoredCandidates = 0, screenedCount = 0;
     try {
-      for (const run of await db.screening.listRuns()) {
+      for (const run of (await db.screening.listRuns()).filter((r) => r.ownerId === req.user!.id)) {
         if (run.result?.shortlisted) {
           for (const c of run.result.shortlisted) {
             if (c.score?.total !== undefined) { totalScore += c.score.total; scoredCandidates++; }

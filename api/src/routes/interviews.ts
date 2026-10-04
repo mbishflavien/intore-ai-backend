@@ -19,6 +19,12 @@ interviewsRouter.post("/", requireAuth, requireRecruiter, validateBody(createInt
     if (!application) { res.status(404).json({ error: "Application not found" }); return; }
     const job = await db.job.findById(body.jobId);
     if (!job || job.recruiterId !== req.user!.id) { res.status(403).json({ error: "You do not own this job" }); return; }
+    // The application must belong to that job and candidate, or a recruiter could
+    // schedule (and notify) another recruiter's applicant.
+    if (application.jobId !== job.id || application.applicantId !== body.candidateId) {
+      res.status(400).json({ error: "Application does not match this job and candidate" });
+      return;
+    }
 
     const interview = buildInterview({
       applicationId: body.applicationId, jobId: body.jobId, candidateId: body.candidateId,

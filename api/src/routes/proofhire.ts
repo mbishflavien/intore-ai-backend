@@ -12,7 +12,8 @@ import { createChallengeSchema, proofHireConfigSchema, submissionSchema, updateC
 
 export const proofhireRouter = Router();
 
-proofhireRouter.get("/templates", (_req, res) => {
+// Templates include grading patterns and double as live challenges: recruiters only.
+proofhireRouter.get("/templates", requireAuth, requireRecruiter, (_req, res) => {
   res.status(200).json({ templates: DEFAULT_PROOF_CHALLENGE_TEMPLATES });
 });
 
@@ -46,9 +47,10 @@ proofhireRouter.get("/my-submissions", requireAuth, requireApplicant, async (req
 proofhireRouter.get("/challenges/:challengeId", requireAuth, async (req, res) => {
   const challenge = await db.proofChallenge.findById(param(req, "challengeId"));
   if (!challenge) { res.status(404).json({ error: "Challenge not found" }); return; }
-  // Applicants may read a challenge only via the job-scoped endpoint; direct
-  // reads stay recruiter-scoped to avoid leaking other recruiters' banks.
+  // Applicants read challenges only via the job-scoped endpoint; direct reads are
+  // owner-only so recruiters can't browse each other's challenge banks.
   if (req.user!.role !== "recruiter") { res.status(403).json({ error: "Only recruiters can access this challenge directly" }); return; }
+  if (challenge.recruiterId !== req.user!.id) { res.status(404).json({ error: "Challenge not found" }); return; }
   res.status(200).json({ challenge });
 });
 
@@ -86,7 +88,12 @@ proofhireRouter.get("/jobs/:jobId/challenge", async (req, res) => {
   }
   const challenge = await db.proofChallenge.findById(job.proofHire.challengeId);
   if (!challenge) { res.status(404).json({ error: "Challenge not found" }); return; }
-  res.status(200).json({ challenge, mode: job.proofHire.mode });
+  // Public, candidate-facing view: test case titles stay, the grading patterns don't.
+  const publicChallenge = {
+    ...challenge,
+    testCases: challenge.testCases.map(({ expectedPatterns: _answerKey, ...testCase }) => testCase),
+  };
+  res.status(200).json({ challenge: publicChallenge, mode: job.proofHire.mode });
 });
 
 // SECURE: previously unauthenticated + leaked per-submission rows. Now the

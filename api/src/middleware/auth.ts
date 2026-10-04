@@ -1,47 +1,40 @@
 import type { NextFunction, Request, Response } from "express";
-import { verifyToken } from "../auth.js";
 import type { PublicUser } from "../../../packages/shared/src/index.js";
+import { db } from "../repos.js";
+import { toPublicUser } from "../repositories.js";
+import { readSession } from "../security/sessions.js";
 
 declare global {
   namespace Express {
     interface Request {
       user?: PublicUser;
+      sessionId?: string;
     }
   }
 }
 
-function tokenFromHeader(req: Request): string | null {
-  const header = req.headers.authorization;
-  if (!header?.startsWith("Bearer ")) return null;
-  return header.slice(7);
-}
-
 /**
- * Attach the authenticated user (if any) to req.user.
+ * Attach the authenticated user (if any) to req.user from the session cookie.
+ * The user is re-read from the database on every request, so role changes and
+ * deleted accounts take effect immediately (nothing is trusted from the client).
  * Never rejects — use requireAuth/requireRole to enforce.
  */
 export async function attachUser(req: Request, _res: Response, next: NextFunction): Promise<void> {
   try {
-    const token = tokenFromHeader(req);
-    if (!token) return next();
-    const payload = await verifyToken(token);
-    if (!payload) return next();
-    req.user = {
-      id: payload.sub,
-      username: payload.username,
-      firstName: payload.firstName,
-      lastName: payload.lastName,
-      email: payload.email,
-      role: payload.role,
-      createdAt: new Date().toISOString(),
-    };
+    const session = await readSession(req);
+    if (!session) return next();
+    const user = await db.user.findById(session.userId);
+    if (!user) return next();
+    req.user = toPublicUser(user);
+    req.sessionId = session.id;
     return next();
-  } catch {
+  } catch (error) {
+    console.error("[auth] session lookup failed:", error instanceof Error ? error.message : error);
     return next();
   }
 }
 
-/** 401 when no valid JWT is present. */
+/** 401 when no valid session is present. */
 export function requireAuth(req: Request, res: Response, next: NextFunction): void {
   if (!req.user) {
     res.status(401).json({ error: "Unauthorized" });

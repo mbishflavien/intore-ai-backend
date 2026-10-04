@@ -12,12 +12,29 @@ export const registerSchema = z.object({
   firstName: nonEmpty("firstName", 100),
   lastName: nonEmpty("lastName", 100),
   email,
-  password: z.string().min(6, "Password must be at least 6 characters").max(256),
+  // Strength (length, classes, common/breached lists) is enforced by security/passwordPolicy.ts.
+  password: z.string().min(1, "Password is required").max(128, "Use at most 128 characters"),
   role: z.enum(["applicant", "recruiter"], { message: "Role must be 'applicant' or 'recruiter'" }),
+  captchaToken: z.string().max(2048).optional(),
 });
 
 export const loginSchema = z.object({
   emailOrUsername: nonEmpty("Email/Username", 254),
+  password: z.string().min(1, "Password is required").max(256),
+  captchaToken: z.string().max(2048).optional(),
+});
+
+/** A 6-digit authenticator code or a backup code ("xxxxx-xxxxx"). */
+export const otpCodeSchema = z.object({
+  code: z.string().trim().min(6, "Enter your 6-digit code").max(20),
+});
+
+export const mfaDisableSchema = z.object({
+  password: z.string().min(1, "Password is required").max(256),
+  code: z.string().trim().min(6, "Enter your 6-digit code").max(20),
+});
+
+export const deleteAccountSchema = z.object({
   password: z.string().min(1, "Password is required").max(256),
 });
 
