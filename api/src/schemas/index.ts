@@ -47,9 +47,11 @@ export const resumeIngestSchema = z.object({
 
 // ---------- proofhire ----------
 const testCaseSchema = z.object({
-  input: z.unknown(),
-  expected: z.unknown(),
-  description: z.string().max(2000).optional(),
+  id: z.string().max(128).optional(),
+  title: nonEmpty("Test case title", 300),
+  description: z.string().max(5000).optional(),
+  expectedPatterns: z.array(z.string().max(2000)).min(1, "Each test case needs at least one expected pattern"),
+  weight: z.number().min(0).max(100).optional(),
 }).passthrough();
 
 export const createChallengeSchema = z.object({
