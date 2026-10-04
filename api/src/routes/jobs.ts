@@ -43,7 +43,11 @@ jobsRouter.post("/", requireAuth, requireRecruiter, validateBody(createJobSchema
 
 jobsRouter.get("/:jobId", async (req, res) => {
   const job = await db.job.findById(param(req, "jobId"));
-  if (!job) { res.status(404).json({ error: "Job not found" }); return; }
+  // Drafts and closed jobs are visible only to the recruiter who owns them.
+  if (!job || (job.status !== "published" && job.recruiterId !== req.user?.id)) {
+    res.status(404).json({ error: "Job not found" });
+    return;
+  }
   res.status(200).json({ job });
 });
 
@@ -126,7 +130,7 @@ jobsRouter.post("/:jobId/screen", requireAuth, requireRecruiter, async (req, res
       applicants: applications.map((app) => ({ ...app.profile, id: app.applicantId })),
       shortlistSize: 10, proofSignals,
     };
-    const run = await createRunRecord(screeningRequest);
+    const run = await createRunRecord(screeningRequest, req.user!.id);
     const allCandidates = run.result.shortlisted?.length > 0
       ? run.result.shortlisted
       : applications.map<RankedCandidate>((app, idx) => ({

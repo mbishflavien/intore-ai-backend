@@ -13,7 +13,7 @@ import { buildNotification, buildProofSignal } from "./repositories.js";
 
 export const orchestrator = new ScreeningOrchestrator();
 
-export async function createRunRecord(request: ScreeningRequest): Promise<ScreeningRunRecord> {
+export async function createRunRecord(request: ScreeningRequest, ownerId?: string): Promise<ScreeningRunRecord> {
   const normalizedRequest: ScreeningRequest = {
     ...request,
     applicants: request.applicants.map((applicant) =>
@@ -23,6 +23,7 @@ export async function createRunRecord(request: ScreeningRequest): Promise<Screen
   const result = await orchestrator.run(normalizedRequest);
   const run: ScreeningRunRecord = {
     id: crypto.randomUUID(),
+    ...(ownerId ? { ownerId } : {}),
     request: normalizedRequest,
     result,
     createdAt: new Date().toISOString(),

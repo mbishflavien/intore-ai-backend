@@ -24,6 +24,7 @@ import type {
   ScreeningRunRecord,
   TalentProfile,
   User,
+  UserMfa,
   UserRole,
 } from "../../packages/shared/src/index.js";
 
@@ -43,6 +44,8 @@ export interface UserRepository {
   findById(id: string): Promise<User | null>;
   listByRole(role: UserRole): Promise<User[]>;
   updatePasswordHash(id: string, passwordHash: string): Promise<void>;
+  /** Replace (or clear, with null) the user's MFA state. */
+  updateMfa(id: string, mfa: UserMfa | null): Promise<void>;
   delete(id: string): Promise<void>;
 }
 
@@ -182,6 +185,15 @@ class InMemoryUserRepository implements UserRepository {
       return;
     }
     this.users.set(id, { ...existing, passwordHash, updatedAt: new Date().toISOString() });
+  }
+
+  async updateMfa(id: string, mfa: UserMfa | null): Promise<void> {
+    const existing = this.users.get(id);
+    if (!existing) {
+      return;
+    }
+    const { mfa: _previous, ...rest } = existing;
+    this.users.set(id, { ...rest, ...(mfa ? { mfa } : {}), updatedAt: new Date().toISOString() });
   }
 
   async delete(id: string): Promise<void> {
@@ -481,6 +493,13 @@ class MongoUserRepository implements UserRepository {
     await this.db()
       .collection<User>("users")
       .updateOne({ id }, { $set: { passwordHash, updatedAt: new Date().toISOString() } });
+  }
+
+  async updateMfa(id: string, mfa: UserMfa | null): Promise<void> {
+    const updatedAt = new Date().toISOString();
+    await this.db()
+      .collection<User>("users")
+      .updateOne({ id }, mfa ? { $set: { mfa, updatedAt } } : { $unset: { mfa: "" }, $set: { updatedAt } });
   }
 
   async delete(id: string): Promise<void> {
@@ -1158,6 +1177,7 @@ export function toPublicUser(user: User): PublicUser {
     email: user.email,
     role: user.role,
     createdAt: user.createdAt,
+    mfaEnabled: Boolean(user.mfa?.enabled),
   };
 }
 

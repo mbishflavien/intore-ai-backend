@@ -348,6 +348,8 @@ export interface ScreeningResult {
 
 export interface ScreeningRunRecord {
   id: string;
+  /** Recruiter who ran it; runs are only visible to their owner. */
+  ownerId?: string;
   request: ScreeningRequest;
   result: ScreeningResult;
   createdAt: string;
@@ -502,6 +504,19 @@ export interface User {
   role: UserRole;
   createdAt: string;
   updatedAt: string;
+  mfa?: UserMfa;
+}
+
+/** Server-only TOTP state. Secrets are AES-256-GCM encrypted; backup codes are stored as SHA-256 hashes. */
+export interface UserMfa {
+  enabled: boolean;
+  secretEnc?: string;
+  pendingSecretEnc?: string;
+  pendingCreatedAt?: string;
+  backupCodeHashes: string[];
+  /** Highest TOTP time-step accepted so far; codes at or below it are replays. */
+  lastUsedStep?: number;
+  enabledAt?: string;
 }
 
 export interface PublicUser {
@@ -512,6 +527,7 @@ export interface PublicUser {
   email: string;
   role: UserRole;
   createdAt: string;
+  mfaEnabled?: boolean;
 }
 
 export type JobStatus = "draft" | "published" | "closed";

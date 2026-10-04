@@ -7,6 +7,7 @@
     "@umurava-ai/engine": "0.0.1",
     "@umurava-ai/shared": "0.0.1",
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^16.4.5",
     "express": "^4.22.3",
@@ -14,7 +15,9 @@
     "helmet": "^8.3.0",
     "jose": "^6.2.12",
     "mongodb": "^6.15.0",
+    "otpauth": "^9.5.2",
     "pdf-parse": "^1.1.1",
+    "qrcode": "^1.5.4",
     "zod": "^4.6.5"
   },
   "scripts": {
@@ -24,7 +27,9 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6"
+    "@types/express": "^5.0.6",
+    "@types/qrcode": "^1.5.6"
   }
 }
